@@ -33,10 +33,10 @@ namespace DungeonGeneration
     /// <summary>
     /// Object containing data for tile generation.
     /// </summary>
+    [CreateAssetMenu(menuName = "LevelGeneration/TileDescription")]
     public class TileDescription : ScriptableObject
     {
         public FloorType Floor;
-        public EntityType Entity;
         public GameObject Visual;
     }
 }
