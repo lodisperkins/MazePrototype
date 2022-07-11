@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using File = UnityEngine.Windows.File;
+using Random = UnityEngine.Random;
 
 namespace DungeonGeneration
 {
@@ -61,8 +62,35 @@ namespace DungeonGeneration
             {
                 for (int j = 0; j < _data.width; j++)
                 {
-                    _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
-                        description => description.Floor == (FloorType)_data.layers[0].data2D[j, i]);
+                    TileID tileID = (TileID)_data.layers[0].data2D[j, i];
+                    
+                    switch (tileID)
+                    {
+                        case TileID.FLOOR:
+                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                                description => description.Floor == FloorType.FLOOR);
+                            break;
+                        case TileID.VOID:
+                            _tileDescriptions[j, i] = null;
+                            break;
+                        case TileID.WALL:
+                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                                description => description.Floor == FloorType.WALL);
+                            break;
+                        case TileID.POSSIBLEWALL:
+                            if (Random.Range(0, 2) == 0)
+                            {
+                                _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                                    description => description.Floor == FloorType.FLOOR);
+                                break;
+                            }
+                            
+                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                                description => description.Floor == FloorType.WALL);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
         }
@@ -73,6 +101,7 @@ namespace DungeonGeneration
             StreamReader reader = new StreamReader(files[0]);
             string dat = reader.ReadToEnd();
             _data = JsonConvert.DeserializeObject<RoomData>(dat);
+            _tileDescriptions = new TileDescription[_data.width, _data.height];
             InitializeTiles();
         }
     }

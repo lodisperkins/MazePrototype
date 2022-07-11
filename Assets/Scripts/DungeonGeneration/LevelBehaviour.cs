@@ -10,7 +10,6 @@ public class LevelBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         _room = GetComponent<RoomBehaviour>();
         _room.LoadRoomData();
     }
