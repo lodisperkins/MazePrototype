@@ -1,0 +1,33 @@
+{
+  "ogmoVersion": "3.4.0",
+  "width": 128,
+  "height": 128,
+  "offsetX": 0,
+  "offsetY": 0,
+  "values": {"Direction": "EAST"},
+  "layers": [
+    {
+      "name": "tileLayout",
+      "_eid": "03915452",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 16,
+      "gridCellHeight": 16,
+      "gridCellsX": 8,
+      "gridCellsY": 8,
+      "tileset": "roomFloor",
+      "data2D": [
+        [-1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1, 509, 509],
+        [-1, -1, -1, -1, -1, 509, 509, 509],
+        [-1, -1, -1, -1, -1, 509, 509, 509],
+        [-1, -1, -1, -1, -1, 509, 509, 509],
+        [-1, -1, -1, -1, -1, -1, 509, 509],
+        [-1, -1, -1, -1, -1, -1, -1, 509],
+        [-1, -1, -1, -1, -1, -1, -1, -1]
+      ],
+      "exportMode": 0,
+      "arrayMode": 1
+    }
+  ]
+}
