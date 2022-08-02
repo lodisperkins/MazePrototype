@@ -16,7 +16,7 @@ public sealed class Graph<T>
         public Node<T> Parent = null;
         public T Data;
         public Vector2 Position;
-        public List<Edge<T>> Edges;
+        public List<Edge<T>> Edges = new List<Edge<T>>();
         public float GScore;
         public float HScore;
         public float FScore;
@@ -45,6 +45,11 @@ public sealed class Graph<T>
     public Node<T> GetNode(Vector2 position)
     {
         return _graph[(int)position.x, (int)position.y];
+    }
+
+    public Node<T> GetNode(int x, int y)
+    {
+        return _graph[x, y];
     }
 
     private void Generate()

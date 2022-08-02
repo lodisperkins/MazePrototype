@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be4d73bbd2c718d45ab5ed14e1213c5a, type: 3}
-  m_Name: TestLevel1Template
+  m_Name: ExampleLevelTemplate
   m_EditorClassIdentifier: 
   _brownAmount: 0
   _miniBossAmount: 0
   _treasureAmount: 0
   _trapAmount: 0
-  _width: 0
-  _height: 0
+  _width: 8
+  _height: 8
   _complexityScore: 0
