@@ -21,6 +21,9 @@ public class LevelBehaviour : MonoBehaviour
         GenerateShapes();
     }
 
+    /// <summary>
+    /// Loads all level templates for the world and picks one at random to be used.
+    /// </summary>
     private void InitTemplate()
     {
         LevelTemplate[] templates = Resources.LoadAll<LevelTemplate>("World1/LevelTemplates");
@@ -28,17 +31,28 @@ public class LevelBehaviour : MonoBehaviour
         _template = templates[Random.Range(0, templates.Length)];
     }
 
+    /// <summary>
+    /// Gets all shapes in the direction folder and chooses one to load at random.
+    /// </summary>
+    /// <param name="direction">Which side the shape will spawn on the map (North,South,East,West).</param>
+    /// <returns>Deserialized data from the ogmo editor that contains all info about the shape.</returns>
     private Root LoadShape(string direction)
     {
+        //Loads all shapes in the given direction folder and chooses one at random.
         string[] files = Directory.GetFiles("Assets/Resources/World1/ShapeTemplates/" + direction, "*.json");
         int randChoice = Random.Range(0, files.Length);
-
+        //Reads all the text from the file and return the deserialized value.
         string jsonDat = File.ReadAllText(files[randChoice]);
         return JsonConvert.DeserializeObject<Root>(jsonDat);
     }
 
+    /// <summary>
+    /// Sets the ink color of each node on the graph that should be covered by the shape.
+    /// </summary>
+    /// <param name="shape">The ogmo data of the shape to place.</param>
     private void PlaceShape(Root shape)
     {
+        //Iterates through graph to assign ink color.
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
@@ -51,6 +65,9 @@ public class LevelBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Picks two random directions and loads a shape for each.
+    /// </summary>
     private void GenerateShapes()
     {
         int randChoice = Random.Range(0, 2);
