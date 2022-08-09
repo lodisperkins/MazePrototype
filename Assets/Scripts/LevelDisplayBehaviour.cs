@@ -19,15 +19,27 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
     void DisplayLevelLayout()
     {
-        for (int i = 0; i < _level.Height; i++)
+        for (int y = 0; y < _level.Height; y++)
         {
-            for (int j = 0; j < _level.Width; j++)
+            for (int x = 0; x < _level.Width; x++)
             {
-                _images[i + j] = Instantiate(_iconRef, gameObject.transform);
-                _images[i + j].name = "(" + j + "," + i + ")";
-                _images[i + j].color = _level.RoomGraph.GetNode(j, i).Data.inkColor == "Black" ? Color.black : Color.white;
+                _images[y + x] = Instantiate(_iconRef, gameObject.transform);
+                _images[y + x].name = "(" + x + "," + y + ")";
+                AssignColor(x, y);
             }
         }
+    }
+
+    private void AssignColor(int x, int y)
+    {
+        if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")
+            _images[y + x].color = Color.green;
+        else if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "End")
+            _images[y + x].color = Color.red;
+        else if (_level.RoomGraph.GetNode(x, y).Data.inkColor == "Black")
+            _images[y + x].color = Color.black;
+        else
+            _images[y + x].color = Color.white;
     }
 
     // Update is called once per frame

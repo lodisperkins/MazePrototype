@@ -24,6 +24,8 @@ namespace DungeonGeneration
         private int _height;
         [SerializeField]
         private int _complexityScore;
+        [SerializeField]
+        private int _defaultGraphite;
 
         public int BrownAmount { get => _brownAmount; }
         public int MiniBossAmount { get => _miniBossAmount;  }
@@ -32,5 +34,6 @@ namespace DungeonGeneration
         public int Width { get => _width; }
         public int Height { get => _height; }
         public int ComplexityScore { get => _complexityScore; }
+        public int DefaultGraphite { get => _defaultGraphite; }
     }
 }

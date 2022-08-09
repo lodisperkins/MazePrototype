@@ -2,31 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public class Node<T>
+{
+    public Node<T> Parent = null;
+    public T Data;
+    public Vector2 Position;
+    public List<Edge<T>> Edges = new List<Edge<T>>();
+    public float GScore;
+    public float HScore;
+    public float FScore;
+}
+
+public struct Edge<T>
+{
+    public Node<T> Target;
+    public float Cost;
+}
 
 /// <summary>
 /// Class for AI utility function like pathfinding, 
 /// </summary>
 
-public sealed class Graph<T>
+public class Graph<T>
 {
-    public delegate bool NodeCondition(Node<T> node);
-
-    public class Node<T>
-    {
-        public Node<T> Parent = null;
-        public T Data;
-        public Vector2 Position;
-        public List<Edge<T>> Edges = new List<Edge<T>>();
-        public float GScore;
-        public float HScore;
-        public float FScore;
-    }
-
-    public struct Edge<T>
-    {
-        public Node<T> Target;
-        public float Cost;
-    }
+    public delegate bool NodeCondition(Node<T> currentNode, Node<T> nextNode);
 
     private int _width;
     private int _height;
@@ -200,7 +199,7 @@ public sealed class Graph<T>
             openList = SortNodes(openList);
             current = openList[0];
 
-            if (EqualityComparer<T>.Default.Equals(current.Data, end.Data))
+            if (current == end)
                 return ReconstructPath(start, current);
 
             openList.Remove(current);
@@ -210,7 +209,7 @@ public sealed class Graph<T>
             {
                 if (closedList.Contains(edge.Target) || openList.Contains(edge.Target))
                     continue;
-                else if (condition?.Invoke(edge.Target) == true)
+                else if (condition?.Invoke(current, edge.Target) == true)
                     continue;
                 else
                 {
@@ -222,8 +221,10 @@ public sealed class Graph<T>
             }
         }
 
+        closedList = SortNodes(closedList);
+        Node<T> newGoal = closedList[0];
         if (allowPartialPath)
-            return ReconstructPath(start, current);
+            return GetPath(startNode, newGoal.Data, condition);
 
         return new List<Node<T>>();
     }
@@ -251,7 +252,7 @@ public sealed class Graph<T>
             openList = SortNodes(openList);
             current = openList[0];
 
-            if (EqualityComparer<T>.Default.Equals(current.Data, end.Data))
+            if (current == end)
                 return ReconstructPath(start, current);
 
             openList.Remove(current);
@@ -261,7 +262,7 @@ public sealed class Graph<T>
             {
                 if (closedList.Contains(edge.Target) || openList.Contains(edge.Target))
                     continue;
-                else if (condition?.Invoke(edge.Target) == true)
+                else if (condition?.Invoke(current, edge.Target) == true)
                     continue;
                 else
                 {
@@ -273,8 +274,10 @@ public sealed class Graph<T>
             }
         }
 
+        closedList = SortNodes(closedList);
+        Node<T> newGoal = closedList[0];
         if (allowPartialPath)
-            return ReconstructPath(start, current);
+            return GetPath(startPos, newGoal.Position, condition);
 
         return new List<Node<T>>();
     }
