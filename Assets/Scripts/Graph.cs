@@ -80,13 +80,23 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// Calculates distance between two panels without including diagnols
+    /// Calculates distance between two nodes without including diagnols
     /// </summary>
-    /// <param name="panel">The panel to start from</param>
+    /// <param name="node">The panel to start from</param>
     /// <param name="goal">The panel the path ends</param>
-    public float CalculateManhattanDistance(Node<T> panel, Node<T> goal)
+    public float CalculateManhattanDistance(Node<T> node, Node<T> goal)
     {
-        return Math.Abs(panel.Position.x - goal.Position.x) + Math.Abs(panel.Position.y - goal.Position.y);
+        return Math.Abs(node.Position.x - goal.Position.x) + Math.Abs(node.Position.y - goal.Position.y);
+    }
+
+    /// <summary>
+    /// Calculates distance between two points without including diagnols
+    /// </summary>
+    /// <param name="position">The point to start from</param>
+    /// <param name="goal">The point the path ends</param>
+    public float CalculateManhattanDistance(Vector2 position, Vector2 goal)
+    {
+        return Math.Abs(position.x - goal.x) + Math.Abs(position.y - goal.y);
     }
 
     /// <summary>
@@ -117,7 +127,7 @@ public class Graph<T>
     /// </summary>
     /// <param name="nodelist">The list of nodes to sort</param>
     /// <returns>The sorted list</returns>
-    private List<Node<T>> SortNodes(List<Node<T>> nodelist)
+    public List<Node<T>> SortNodes(List<Node<T>> nodelist)
     {
         Node<T> temp;
 
@@ -146,10 +156,15 @@ public class Graph<T>
     {
         List<Node<T>> currentPath = new List<Node<T>>();
 
+        int iterCount = 0;
         //Travels backwards from goal node using the node parent until it reaches the starting node
         Node<T> temp = endPanel;
         while (temp != null)
         {
+            iterCount++;
+
+            if (iterCount > 100)
+                throw new Exception("InfiniteLoop");
             //Insert each panel at the beginning of the list so that the path is in the correct order
             currentPath.Insert(0, temp);
             temp = temp.Parent;
@@ -194,8 +209,15 @@ public class Graph<T>
         start.FScore =
             CalculateManhattanDistance(start, end);
 
+        start.Parent = null;
+
+        int iterCount = 0;
         while (openList.Count > 0)
         {
+            iterCount++;
+
+            if (iterCount > 100)
+                throw new Exception("InfiniteLoop");
             openList = SortNodes(openList);
             current = openList[0];
 
@@ -247,8 +269,15 @@ public class Graph<T>
         start.FScore =
             CalculateManhattanDistance(start, end);
 
+        start.Parent = null;
+        int iterCount = 0;
         while (openList.Count > 0)
         {
+            iterCount++;
+
+            if (iterCount > 100)
+                throw new Exception("InfiniteLoop");
+
             openList = SortNodes(openList);
             current = openList[0];
 

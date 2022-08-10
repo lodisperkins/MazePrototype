@@ -3,6 +3,7 @@ using UnityEngine;
 using DungeonGeneration;
 using System.IO;
 using Newtonsoft.Json;
+using System;
 
 public class LevelBehaviour : MonoBehaviour
 {
@@ -24,7 +25,11 @@ public class LevelBehaviour : MonoBehaviour
         InitTemplate();
         _roomGraph = new Graph<RoomDescription>(_template.Width, _template.Height);
         GenerateShapes();
+        PlaceStartExit();
         FindPath();
+        //Mark the nodes at the start an end positions so they can be displayed correctly.
+        _roomGraph.GetNode(_startPosition).Data.stickerType = "Start";
+        _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
     }
 
     /// <summary>
@@ -34,21 +39,21 @@ public class LevelBehaviour : MonoBehaviour
     {
         LevelTemplate[] templates = Resources.LoadAll<LevelTemplate>("World1/LevelTemplates");
 
-        _template = templates[Random.Range(0, templates.Length)];
+        _template = templates[UnityEngine.Random.Range(0, templates.Length)];
     }
 
-    private bool CheckValidNode(Node<RoomDescription> currentNode, Node<RoomDescription> nextNode)
+    private bool CheckInvalidNode(Node<RoomDescription> currentNode, Node<RoomDescription> nextNode)
     {
         _lastNodeEvaluated = nextNode;
 
         if (nextNode.Position.x - currentNode.Position.x < 0 && _travelDirection == Vector2.right)
-            return false;
+            return true;
         if (nextNode.Position.y - currentNode.Position.y < 0 && _travelDirection == Vector2.up)
-            return false;
+            return true;
         if (nextNode.Data.inkColor == "Black")
-            return false;
+            return true;
 
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -60,7 +65,7 @@ public class LevelBehaviour : MonoBehaviour
     {
         //Loads all shapes in the given direction folder and chooses one at random.
         string[] files = Directory.GetFiles("Assets/Resources/World1/ShapeTemplates/" + direction, "*.json");
-        int randChoice = Random.Range(0, files.Length);
+        int randChoice = UnityEngine.Random.Range(0, files.Length);
         //Reads all the text from the file and return the deserialized value.
         string jsonDat = File.ReadAllText(files[randChoice]);
         return JsonConvert.DeserializeObject<Root>(jsonDat);
@@ -79,53 +84,79 @@ public class LevelBehaviour : MonoBehaviour
             {
                 if (shape.layers[0].data2D[x, y] != -1)
                     RoomGraph.GetNode(x, y).Data.inkColor = "Black";
-                else if (_startPosition == new Vector2(-1, -1))
+            }
+        }
+    }
+
+    private void PlaceStartExit()
+    {
+        //Iterates through graph to assign ink color.
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                if (RoomGraph.GetNode(x, y).Data.inkColor != "Black" && _startPosition == new Vector2(-1, -1))
                     _startPosition = new Vector2(x, y);
-                else
-                    _exitPosition = new Vector2(x, y);
+                else if (RoomGraph.GetNode(Width - (1 + x), Height - (1 + y)).Data.inkColor != "Black" && _exitPosition == new Vector2(-1, -1))
+                    _exitPosition = new Vector2(Width - (1 + x), Height - (1 + y));
+                else if (_startPosition != new Vector2(-1, -1) && _exitPosition != new Vector2(-1, -1))
+                    return;
             }
         }
     }
 
     private void FindPath()
     {
-        //TO DO: Loop until the the exit position is either replaced or reached
-        bool exitPosFound = false;
         Vector2 currentStartPosition = _startPosition;
         int nodesTravelled = 0;
 
         //Loop while a valid exit position hasn't been found.
-        while (!exitPosFound)
+        for (int i = 0; i < _template.Width * Height; i++)
         {
             //Use A* to find a path from the potential start and exit position.
-            List<Node<RoomDescription>> path = _roomGraph.GetPath(currentStartPosition, _exitPosition, CheckValidNode, true);
+            List<Node<RoomDescription>> path = _roomGraph.GetPath(currentStartPosition, _exitPosition, CheckInvalidNode, true);
 
-            //If the length of the path has exceeded the graphite limit...
+            //Return if the exit was found successfully.
+            if (path[path.Count - 1].Position == _exitPosition)
+                return;
+            //Otherwise if the length of the path has exceeded the graphite limit...
             if (path.Count >= _template.DefaultGraphite - nodesTravelled)
             {
                 //...place the exit at the farthest node in the path.
-                _exitPosition = path[_template.DefaultGraphite - 1].Position;
-                exitPosFound = true;
+                _exitPosition = path[path.Count - 1].Position;
+                return;
             }
-            //Otherwise if the exit couldn't be reached because of obstacles...
-            else if (path[path.Count - 1].Position != _exitPosition)
-            {
-                //...clear the path.
-                Node<RoomDescription> lastNode = path[path.Count - 1];
-                foreach (Edge<RoomDescription> edge in lastNode.Edges)
-                    edge.Target.Data.inkColor = "White";
+            
+            //If a path couldn't be found, it is most likely due to it being covered by inkblots.
+            //This section removes the inkblots that are blocking the path.
 
-                //Update the start position so previous nodes aren't evaluated again.
-                currentStartPosition = path[path.Count - 1].Position;
-                nodesTravelled = path.Count;
+            Node<RoomDescription> lastNode = path[path.Count - 1];
+            List<Edge<RoomDescription>> obstacleEdges = lastNode.Edges.FindAll(edge => edge.Target.Data.inkColor == "Black");
+            Node<RoomDescription> obstacleNode = null;
+
+            //Throws an error if the path couldn't be found even without being blocked by obstacles.
+            if (obstacleEdges.Count == 0)
+                throw new Exception("Cannot find a valid path to the exit.");
+
+            //Calculate the f score for the first obstacle in the list so that it can be compared against others.
+            obstacleNode = obstacleEdges[0].Target;
+            obstacleNode.FScore = obstacleEdges[0].Cost + Vector2.Distance(obstacleNode.Position, _exitPosition);
+            //Loops and compares each obstacle node to find which is the closes to the goal.
+            for (int j = 1; j < obstacleEdges.Count; j++)
+            {
+                obstacleEdges[j].Target.FScore = obstacleEdges[j].Cost + Vector2.Distance(obstacleEdges[j].Target.Position, _exitPosition);
+                if (obstacleEdges[j].Target.FScore < obstacleNode.FScore)
+                    obstacleNode = obstacleEdges[j].Target;
             }
-            else
-                exitPosFound = true;
+
+            if (obstacleNode != null)
+                obstacleNode.Data.inkColor = "White";
+
+            //Update the start position so previous nodes aren't evaluated again.
+            currentStartPosition = lastNode.Position;
+            nodesTravelled += path.Count;
         }
 
-        //Mark the nodes at the start an end positions so they can be displayed correctly.
-        _roomGraph.GetNode(_startPosition).Data.stickerType = "Start";
-        _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
     }
 
     /// <summary>
@@ -133,7 +164,7 @@ public class LevelBehaviour : MonoBehaviour
     /// </summary>
     private void GenerateShapes()
     {
-        int randChoice = Random.Range(0, 2);
+        int randChoice = UnityEngine.Random.Range(0, 2);
 
         Root shape1 = null;
         Root shape2 = null;

@@ -19,3 +19,4 @@ MonoBehaviour:
   _width: 8
   _height: 8
   _complexityScore: 0
+  _defaultGraphite: 16
