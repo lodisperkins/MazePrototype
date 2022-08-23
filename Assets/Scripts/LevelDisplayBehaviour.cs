@@ -6,16 +6,29 @@ using UnityEngine.UI;
 public class LevelDisplayBehaviour : MonoBehaviour
 {
     [SerializeField] private LevelBehaviour _level;
-    [SerializeField] private Image _iconRef;
-    [SerializeField] private Image[] _images;
+    [SerializeField] private Button _iconRef;
+    private Button[,] _roomButtons;
+    private Button _selectedButton;
 
     // Start is called before the first frame update
     void Start()
     {
-        _images = new Image[_level.Width * _level.Height];
+        _roomButtons = new Button[_level.Width, _level.Height];
         DisplayLevelLayout();
     }
 
+    public void UpdateSelection(int x, int y)
+    {
+        _selectedButton = _roomButtons[x, y];
+
+        _selectedButton.FindSelectableOnDown()?.Select();
+        _selectedButton.FindSelectableOnDown().interactable = true;
+
+        _selectedButton.FindSelectableOnLeft()?.Select();   
+       
+        _selectedButton.FindSelectableOnRight()?.Select(); 
+        _selectedButton.FindSelectableOnUp()?.Select();
+    }
 
     void DisplayLevelLayout()
     {
@@ -23,8 +36,10 @@ public class LevelDisplayBehaviour : MonoBehaviour
         {
             for (int x = 0; x < _level.Width; x++)
             {
-                _images[y + x] = Instantiate(_iconRef, gameObject.transform);
-                _images[y + x].name = "(" + x + "," + y + ")";
+                _roomButtons[x, y] = Instantiate(_iconRef, gameObject.transform);
+                _roomButtons[x, y].name = "(" + x + "," + y + ")";
+                _roomButtons[x, y].onClick.AddListener(() => UpdateSelection(x, y));
+                _roomButtons[x, y].onClick.AddListener(() => _level.AddNodeToPlayerPath(x, y));
                 AssignColor(x, y);
             }
         }
@@ -33,13 +48,19 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private void AssignColor(int x, int y)
     {
         if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")
-            _images[y + x].color = Color.green;
+        {
+            _roomButtons[x, y].image.color = Color.green;
+            UpdateSelection(x, y);
+        }
         else if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "End")
-            _images[y + x].color = Color.red;
+            _roomButtons[x, y].image.color = Color.red;
         else if (_level.RoomGraph.GetNode(x, y).Data.inkColor == "Black")
-            _images[y + x].color = Color.black;
+        {
+            _roomButtons[x, y].image.color = Color.black;
+            _roomButtons[x, y].enabled = false;
+        }
         else
-            _images[y + x].color = Color.white;
+            _roomButtons[x, y].image.color = Color.white;
     }
 
     // Update is called once per frame

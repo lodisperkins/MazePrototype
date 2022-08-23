@@ -14,11 +14,13 @@ public class LevelBehaviour : MonoBehaviour
     private Vector2 _exitPosition = new Vector2(-1, -1);
     private Vector2 _travelDirection;
     private Node<RoomDescription> _lastNodeEvaluated;
+    private List<Node<RoomDescription>> _playerPath;
 
     public int Width { get => _template.Width; }
     public int Height { get => _template.Height; }
     public Graph<RoomDescription> RoomGraph { get => _roomGraph; }
     public List<RoomDescription> OpenRooms { get => _openRooms; }
+    public List<Node<RoomDescription>> PlayerPath { get => _playerPath; private set => _playerPath = value; }
 
     private void Awake()
     {
@@ -28,7 +30,10 @@ public class LevelBehaviour : MonoBehaviour
         PlaceStartExit();
         FindPath();
         //Mark the nodes at the start an end positions so they can be displayed correctly.
-        _roomGraph.GetNode(_startPosition).Data.stickerType = "Start";
+        Node<RoomDescription> _startNode = _roomGraph.GetNode(_startPosition);
+        _startNode.Data.stickerType = "Start";
+        PlayerPath = new List<Node<RoomDescription>>();
+        PlayerPath.Add(_startNode);
         _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
     }
 
@@ -40,6 +45,12 @@ public class LevelBehaviour : MonoBehaviour
         LevelTemplate[] templates = Resources.LoadAll<LevelTemplate>("World1/LevelTemplates");
 
         _template = templates[UnityEngine.Random.Range(0, templates.Length)];
+    }
+
+    public void AddNodeToPlayerPath(int x, int y)
+    {
+        Node<RoomDescription> node = _roomGraph.GetNode(x, y);
+        PlayerPath.Add(node);
     }
 
     private bool CheckInvalidNode(Node<RoomDescription> currentNode, Node<RoomDescription> nextNode)
