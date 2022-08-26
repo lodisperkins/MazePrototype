@@ -21,6 +21,8 @@ public class LevelBehaviour : MonoBehaviour
     public Graph<RoomDescription> RoomGraph { get => _roomGraph; }
     public List<RoomDescription> OpenRooms { get => _openRooms; }
     public List<Node<RoomDescription>> PlayerPath { get => _playerPath; private set => _playerPath = value; }
+    public Vector2 StartPosition { get => _startPosition; }
+    public Vector2 ExitPosition { get => _exitPosition; }
 
     private void Awake()
     {

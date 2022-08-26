@@ -263,7 +263,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _level: {fileID: 594497374}
-  _iconRef: {fileID: 6108956658825719099, guid: b6db1448cd20762418a2b0cef42adc8c, type: 3}
+  _iconRef: {fileID: 4495014619138447012, guid: b6db1448cd20762418a2b0cef42adc8c, type: 3}
+  eventSystem: {fileID: 838208476}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
