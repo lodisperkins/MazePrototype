@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af85e5caadf592541a17d7b6f8782d2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerPath: []
 --- !u!4 &594497375
 Transform:
   m_ObjectHideFlags: 0
@@ -264,7 +265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _level: {fileID: 594497374}
   _iconRef: {fileID: 4495014619138447012, guid: b6db1448cd20762418a2b0cef42adc8c, type: 3}
-  eventSystem: {fileID: 838208476}
+  _eventSystem: {fileID: 838208476}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

@@ -100,7 +100,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9811321, g: 0.599866, b: 0.06016379, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.92243314, g: 0.9339623, b: 0, a: 1}
+    m_SelectedColor: {r: 0.9811321, g: 0.81082654, b: 0.41189036, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -120,9 +120,5 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  _onSelect:
-    m_PersistentCalls:
-      m_Calls: []
-  _onPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
+  _addedToPath: 0
+  _pathColor: {r: 0, g: 0, b: 0, a: 0}

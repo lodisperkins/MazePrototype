@@ -14,7 +14,7 @@ public class LevelBehaviour : MonoBehaviour
     private Vector2 _exitPosition = new Vector2(-1, -1);
     private Vector2 _travelDirection;
     private Node<RoomDescription> _lastNodeEvaluated;
-    private List<Node<RoomDescription>> _playerPath;
+    [SerializeField] private List<Node<RoomDescription>> _playerPath;
 
     public int Width { get => _template.Width; }
     public int Height { get => _template.Height; }
@@ -49,10 +49,15 @@ public class LevelBehaviour : MonoBehaviour
         _template = templates[UnityEngine.Random.Range(0, templates.Length)];
     }
 
-    public void AddNodeToPlayerPath(int x, int y)
+    public bool AddNodeToPlayerPath(int x, int y)
     {
         Node<RoomDescription> node = _roomGraph.GetNode(x, y);
+
+        if (PlayerPath.Contains(node))
+            return false;
+
         PlayerPath.Add(node);
+        return true;
     }
 
     private bool CheckInvalidNode(Node<RoomDescription> currentNode, Node<RoomDescription> nextNode)

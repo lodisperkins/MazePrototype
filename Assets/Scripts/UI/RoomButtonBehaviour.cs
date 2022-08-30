@@ -9,9 +9,20 @@ public class RoomButtonBehaviour : Button, ISelectHandler, IPointerDownHandler
 {
     [SerializeField] private UnityAction _onSelect;
     [SerializeField] private UnityAction _onPointerDown;
+    [SerializeField] private UnityAction _onAddedToPath;
+    [SerializeField] private bool _addedToPath;
+    [SerializeField] private Color _pathColor;
 
     public UnityAction OnButtonSelect { get => _onSelect; set => _onSelect = value; }
     public UnityAction OnMousePointerDown { get => _onPointerDown; set => _onPointerDown = value; }
+    public UnityAction OnAddedToPath { get => _onAddedToPath; set => _onAddedToPath = value; }
+    public bool AddedToPath { get => _addedToPath; set => _addedToPath = value; }
+
+    protected override void Awake()
+    {
+        _pathColor = Color.blue;
+        OnAddedToPath += () => image.color = _pathColor;
+    }
 
     public override void OnSelect(BaseEventData eventData)
     {
