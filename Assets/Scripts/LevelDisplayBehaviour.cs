@@ -10,6 +10,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
     [SerializeField] private LevelBehaviour _level;
     [SerializeField] private RoomButtonBehaviour _iconRef;
     [SerializeField] private EventSystem _eventSystem;
+    [SerializeField] private GameObject _loadDungeonButton;
     private RoomButtonBehaviour[,] _roomButtons;
     private RoomButtonBehaviour _selectedButton;
     private UnityAction<bool> _toggleButtons;
@@ -84,8 +85,13 @@ public class LevelDisplayBehaviour : MonoBehaviour
         _focusActive = false;
         _toggleButtons?.Invoke(true);
 
-        if (_level.AddNodeToPlayerPath(x, y))
+        if (_level.AddNodeToPlayerPath(_selectedButton.Position, new Vector2(x, y)))
+        {
             _roomButtons[x, y].OnAddedToPath?.Invoke();
+
+            if (_level.ExitPosition == new Vector2(x, y))
+                _loadDungeonButton.SetActive(true);
+        }
 
         foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
         {
@@ -107,6 +113,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
                 int posY = y;
 
                 _toggleButtons += isInteractable => ToggleInteractable(posX, posY, isInteractable);
+                _roomButtons[x,y].Position = new Vector2(posX, posY);
                 _roomButtons[x, y].onClick.AddListener(() => UpdateSelection(posX, posY));
                 _roomButtons[x, y].OnButtonSelect += () => AddNodeToPath(posX, posY);
                 AssignColor(x, y);
@@ -121,7 +128,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
         if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")
         {
             _roomButtons[x, y].image.color = Color.green;
-            _level.AddNodeToPlayerPath(x, y);
+            _level.AddNodeToPlayerPath(new Vector2(x,y), new Vector2(x,y));
         }
         else if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "End")
             _roomButtons[x, y].image.color = Color.red;
@@ -132,11 +139,5 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
         else
             _roomButtons[x, y].image.color = Color.white;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

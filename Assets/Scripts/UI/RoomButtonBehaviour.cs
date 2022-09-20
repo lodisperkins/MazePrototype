@@ -12,11 +12,13 @@ public class RoomButtonBehaviour : Button, ISelectHandler, IPointerDownHandler
     [SerializeField] private UnityAction _onAddedToPath;
     [SerializeField] private bool _addedToPath;
     [SerializeField] private Color _pathColor;
+    private Vector2 _position;
 
     public UnityAction OnButtonSelect { get => _onSelect; set => _onSelect = value; }
     public UnityAction OnMousePointerDown { get => _onPointerDown; set => _onPointerDown = value; }
     public UnityAction OnAddedToPath { get => _onAddedToPath; set => _onAddedToPath = value; }
     public bool AddedToPath { get => _addedToPath; set => _addedToPath = value; }
+    public Vector2 Position { get => _position; set => _position = value; }
 
     protected override void Awake()
     {

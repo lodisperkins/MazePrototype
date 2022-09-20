@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Direction
+{
+    NORTH,
+    SOUTH,  
+    WEST,
+    EAST
+}
+
 [System.Serializable]
 public class Node<T>
 {
@@ -13,11 +21,25 @@ public class Node<T>
     public float GScore;
     public float HScore;
     public float FScore;
+
+    /// <summary>
+    /// Gets the edge that has a target in the given direction
+    /// </summary>
+    /// <param name="direction">The direction that the edge is pointing towrds</param>
+    /// <param name="edge">The edge that was found</param>
+    /// <returns>Fals if the edge couldn't be found</returns>
+    public bool GetEdgeForDirection(Direction direction, out Edge<T> edge)
+    {
+        edge = Edges.Find(item => item.DirectionFromParent == direction);
+
+        return !edge.Equals(default(Edge<T>));
+    }
 }
 
 public struct Edge<T>
 {
     public Node<T> Target;
+    public Direction DirectionFromParent;
     public float Cost;
 }
 
@@ -66,14 +88,14 @@ public class Graph<T>
                 if (x > 0)
                 { // west connection
                     Node<T> other = _graph[x - 1, y];
-                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1 });
-                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1 });
+                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.WEST });
+                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.EAST });
                 }
                 if (y > 0)
                 { // north connection
                     Node<T> other = _graph[x, y - 1];
-                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1 });
-                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1 });
+                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.NORTH });
+                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.SOUTH });
                 }
                 // Set the tile on the grid
                 _graph[x, y] = node;

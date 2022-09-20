@@ -16,26 +16,28 @@ public class LevelBehaviour : MonoBehaviour
     private Node<RoomDescription> _lastNodeEvaluated;
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
 
-    public int Width { get => _template.Width; }
-    public int Height { get => _template.Height; }
+    public int Width { get => Template.Width; }
+    public int Height { get => Template.Height; }
     public Graph<RoomDescription> RoomGraph { get => _roomGraph; }
     public List<RoomDescription> OpenRooms { get => _openRooms; }
     public List<Node<RoomDescription>> PlayerPath { get => _playerPath; private set => _playerPath = value; }
     public Vector2 StartPosition { get => _startPosition; }
     public Vector2 ExitPosition { get => _exitPosition; }
+    public LevelTemplate Template { get => _template; private set => _template = value; }
 
     private void Awake()
     {
         InitTemplate();
-        _roomGraph = new Graph<RoomDescription>(_template.Width, _template.Height);
+        _roomGraph = new Graph<RoomDescription>(Template.Width, Template.Height);
         GenerateShapes();
         PlaceStartExit();
         FindPath();
         //Mark the nodes at the start an end positions so they can be displayed correctly.
-        Node<RoomDescription> _startNode = _roomGraph.GetNode(_startPosition);
-        _startNode.Data.stickerType = "Start";
+        Node<RoomDescription> startNode = _roomGraph.GetNode(_startPosition);
+        Node<RoomDescription> endNode = _roomGraph.GetNode(ExitPosition);
+        startNode.Data.stickerType = "Start";
         PlayerPath = new List<Node<RoomDescription>>();
-        PlayerPath.Add(_startNode);
+        PlayerPath.Add(startNode);
         _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
     }
 
@@ -46,15 +48,27 @@ public class LevelBehaviour : MonoBehaviour
     {
         LevelTemplate[] templates = Resources.LoadAll<LevelTemplate>("World1/LevelTemplates");
 
-        _template = templates[UnityEngine.Random.Range(0, templates.Length)];
+        Template = templates[UnityEngine.Random.Range(0, templates.Length)];
     }
 
-    public bool AddNodeToPlayerPath(int x, int y)
+    public bool AddNodeToPlayerPath(Vector2 currentPosition, Vector2 nodePosition)
     {
-        Node<RoomDescription> node = _roomGraph.GetNode(x, y);
+        Node<RoomDescription> node = _roomGraph.GetNode(nodePosition);
+
 
         if (PlayerPath.Contains(node))
             return false;
+
+        Vector2 direction = (currentPosition - nodePosition).normalized;
+
+        if (direction == Vector2.left)
+            node.Data.hasWestExit = true;
+        else if (direction == Vector2.right)
+            node.Data.hasEastExit = true;
+        else if (direction == Vector2.up)
+            node.Data.hasNorthExit = true;
+        else if (direction == Vector2.down)
+            node.Data.hasSouthExit = true;
 
         PlayerPath.Add(node);
         return true;
@@ -129,7 +143,7 @@ public class LevelBehaviour : MonoBehaviour
         int nodesTravelled = 0;
 
         //Loop while a valid exit position hasn't been found.
-        for (int i = 0; i < _template.Width * Height; i++)
+        for (int i = 0; i < Template.Width * Height; i++)
         {
             //Use A* to find a path from the potential start and exit position.
             List<Node<RoomDescription>> path = _roomGraph.GetPath(currentStartPosition, _exitPosition, CheckInvalidNode, true);
@@ -138,7 +152,7 @@ public class LevelBehaviour : MonoBehaviour
             if (path[path.Count - 1].Position == _exitPosition)
                 return;
             //Otherwise if the length of the path has exceeded the graphite limit...
-            if (path.Count >= _template.DefaultGraphite - nodesTravelled)
+            if (path.Count >= Template.DefaultGraphite - nodesTravelled)
             {
                 //...place the exit at the farthest node in the path.
                 _exitPosition = path[path.Count - 1].Position;
@@ -174,7 +188,6 @@ public class LevelBehaviour : MonoBehaviour
             currentStartPosition = lastNode.Position;
             nodesTravelled += path.Count;
         }
-
     }
 
     /// <summary>
@@ -202,6 +215,20 @@ public class LevelBehaviour : MonoBehaviour
 
         PlaceShape(shape1);
         PlaceShape(shape2);
+    }
+
+    public void GenerateRooms()
+    {
+        Vector3 roomSpawnPosition = Vector3.zero;
+
+        for (int i = 0; i < PlayerPath.Count; i++)
+        {
+            RoomBehaviour room = RoomBehaviour.MakeRoom(Template.World, transform, PlayerPath[i].Data);
+
+            roomSpawnPosition = Vector3.Scale(new Vector3(PlayerPath[i].Position.x, 0, PlayerPath[i].Position.y) , new Vector3(room.Width, 0, room.Height));
+
+            room.BuildRoom(roomSpawnPosition);
+        }
     }
 }
 

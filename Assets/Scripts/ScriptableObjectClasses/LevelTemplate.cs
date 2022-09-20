@@ -11,6 +11,8 @@ namespace DungeonGeneration
     public class LevelTemplate : ScriptableObject
     {
         [SerializeField]
+        private int _world;
+        [SerializeField]
         private int _brownAmount;
         [SerializeField]
         private int _miniBossAmount;
@@ -35,5 +37,6 @@ namespace DungeonGeneration
         public int Height { get => _height; }
         public int ComplexityScore { get => _complexityScore; }
         public int DefaultGraphite { get => _defaultGraphite; }
+        public int World { get => _world; set => _world = value; }
     }
 }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be4d73bbd2c718d45ab5ed14e1213c5a, type: 3}
   m_Name: ExampleLevelTemplate
   m_EditorClassIdentifier: 
+  _world: 1
   _brownAmount: 0
   _miniBossAmount: 0
   _treasureAmount: 0

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6513b8cf220b08246a43f15c36729365, type: 3}
   m_Name: WallTile
   m_EditorClassIdentifier: 
-  Floor: 0
-  Visual: {fileID: 0}
+  Floor: 1
+  Visual: {fileID: 1328080937888972822, guid: bdf73190714f5674db7f3775d8c4671b, type: 3}

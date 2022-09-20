@@ -50,44 +50,76 @@ namespace DungeonGeneration
     
     public class RoomBehaviour : MonoBehaviour
     {
-        [SerializeField]
         private TileDescription[] _tileDescriptionReferences;
         private TileDescription[,] _tileDescriptions;
         private int _exits;
         private RoomData _data;
+        private int _world;
+
+
+        public int Width { get => _tileDescriptions.GetLength(1); }
+        public int Height { get => _tileDescriptions.GetLength(0); }
+        public int World { get => _world; set => _world = value; }
+
+
+        public static RoomBehaviour MakeRoom(int world, Transform parentLevel, RoomDescription description)
+        {
+            GameObject room = new GameObject("Room");
+            room.transform.parent = parentLevel;
+            room.transform.position = Vector3.zero;
+
+            RoomBehaviour roomBehaviour = room.AddComponent<RoomBehaviour>();
+            roomBehaviour.World = world;
+            roomBehaviour.LoadRoomData(description);
+
+            return roomBehaviour;
+        }
 
         private void InitializeTiles()
         {
-            for (int i = 0; i < _data.height; i++)
+            for (int y = 0; y < _tileDescriptions.GetLength(0); y++)
             {
-                for (int j = 0; j < _data.width; j++)
+                for (int x = 0; x < _tileDescriptions.GetLength(1); x++)
                 {
-                    TileID tileID = (TileID)_data.layers[0].data2D[j, i];
+                    TileID tileID = (TileID)_data.layers[0].data2D[y, x];
                     
                     switch (tileID)
                     {
                         case TileID.FLOOR:
-                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                 description => description.Floor == FloorType.FLOOR);
                             break;
                         case TileID.VOID:
-                            _tileDescriptions[j, i] = null;
+                            _tileDescriptions[y, x] = null;
                             break;
                         case TileID.WALL:
-                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                 description => description.Floor == FloorType.WALL);
                             break;
                         case TileID.POSSIBLEWALL:
                             if (Random.Range(0, 2) == 0)
                             {
-                                _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                                _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                     description => description.Floor == FloorType.FLOOR);
                                 break;
                             }
                             
-                            _tileDescriptions[j, i] = Array.Find(_tileDescriptionReferences,
+                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                 description => description.Floor == FloorType.WALL);
                             break;
+
+                        case TileID.DOOR:
+                            if (CheckDoorSpawn(x, y))
+                            {
+                                _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
+                                    description => description.Floor == FloorType.FLOOR);
+                                break;
+                            }
+
+                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
+                                description => description.Floor == FloorType.WALL);
+                            break;
+
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -95,14 +127,62 @@ namespace DungeonGeneration
             }
         }
         
-        public void LoadRoomData()
+        private bool CheckDoorSpawn(int x, int y)
         {
-            string[] files = Directory.GetFiles("Assets/Resources/RoomTemplates", "*.json");
-            StreamReader reader = new StreamReader(files[0]);
+            if (x == Width - 1 && _data.values.hasEastExit)
+                return true;
+            else if (x == 0 && _data.values.hasWestExit)
+                return true;
+            else if (y == Height - 1 && _data.values.hasNorthExit)
+                return true;
+            else if (y == 0 && _data.values.hasSouthExit)
+                return true;
+
+            return false;
+
+        }
+
+        private void LoadRoomData(RoomDescription description)
+        {
+            _tileDescriptionReferences = Resources.LoadAll<TileDescription>("World" + World + "/TileDescriptions");
+            string[] files = Directory.GetFiles("Assets/Resources/World" + World + "/RoomTemplates", "*.json");
+
+            int roomNum = Random.Range(0, files.Length);
+
+            StreamReader reader = new StreamReader(files[roomNum]);
             string dat = reader.ReadToEnd();
+
             _data = JsonConvert.DeserializeObject<RoomData>(dat);
-            _tileDescriptions = new TileDescription[_data.width, _data.height];
+            _data.values = description;
+
+            _tileDescriptions = new TileDescription[_data.layers[0].data2D.GetLength(1), _data.layers[0].data2D.GetLength(0)];
             InitializeTiles();
+        }
+
+        public void BuildRoom(Vector3 startingPosition)
+        {
+
+            Vector3 spawnPosition = startingPosition;
+
+            for (int x = 0; x < _tileDescriptions.GetLength(0); x++)
+            {
+                spawnPosition.x = startingPosition.x;
+                for (int y = 0; y < _tileDescriptions.GetLength(1); y++)
+                {
+                    GameObject visual = _tileDescriptions[y, x]?.Visual;
+
+                    if (visual)
+                    {
+                        GameObject tile = Instantiate(visual, gameObject.transform);
+                        tile.transform.position = spawnPosition;
+                    }
+
+                    spawnPosition.x++;
+                }
+
+                spawnPosition.z++;
+            }
+
         }
     }
 }
