@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Direction
+{
+    NORTH,
+    SOUTH,  
+    WEST,
+    EAST
+}
+
 [System.Serializable]
 public class Node<T>
 {
@@ -13,11 +21,25 @@ public class Node<T>
     public float GScore;
     public float HScore;
     public float FScore;
+
+    /// <summary>
+    /// Gets the edge that has a target in the given direction
+    /// </summary>
+    /// <param name="direction">The direction that the edge is pointing towrds</param>
+    /// <param name="edge">The edge that was found</param>
+    /// <returns>Fals if the edge couldn't be found</returns>
+    public bool GetEdgeForDirection(Direction direction, out Edge<T> edge)
+    {
+        edge = Edges.Find(item => item.DirectionFromParent == direction);
+
+        return !edge.Equals(default(Edge<T>));
+    }
 }
 
 public struct Edge<T>
 {
     public Node<T> Target;
+    public Direction DirectionFromParent;
     public float Cost;
 }
 
@@ -66,14 +88,14 @@ public class Graph<T>
                 if (x > 0)
                 { // west connection
                     Node<T> other = _graph[x - 1, y];
-                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1 });
-                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1 });
+                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.WEST });
+                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.EAST });
                 }
                 if (y > 0)
                 { // north connection
                     Node<T> other = _graph[x, y - 1];
-                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1 });
-                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1 });
+                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.NORTH });
+                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.SOUTH });
                 }
                 // Set the tile on the grid
                 _graph[x, y] = node;
@@ -84,8 +106,8 @@ public class Graph<T>
     /// <summary>
     /// Calculates distance between two nodes without including diagnols
     /// </summary>
-    /// <param name="node">The panel to start from</param>
-    /// <param name="goal">The panel the path ends</param>
+    /// <param name="node">The node to start from</param>
+    /// <param name="goal">The node the path ends</param>
     public float CalculateManhattanDistance(Node<T> node, Node<T> goal)
     {
         return Math.Abs(node.Position.x - goal.Position.x) + Math.Abs(node.Position.y - goal.Position.y);
@@ -102,20 +124,20 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// A custom heuristic for path finding that gets the world distance between two panels
+    /// A custom heuristic for path finding that gets the world distance between two nodes
     /// </summary>
-    /// <param name="panel">The starting panel</param>
-    /// <param name="goal">The end of the path</param>
+    /// <param name="panel">The starting node</param>
+    /// <param name="goal">The end of the node</param>
     private float CustomHeuristic(Node<T> panel, Node<T> goal)
     {
         return Vector3.Distance(goal.Position, panel.Position);
     }
 
     /// <summary>
-    /// Finds the distance between two panels while including diagnol distance
+    /// Finds the distance between two nodes while including diagnol distance
     /// </summary>
-    /// <param name="panel">The panel the path starts at</param>
-    /// <param name="goal">The panel the path ends with</param>
+    /// <param name="panel">The node the path starts at</param>
+    /// <param name="goal">The node the path ends with</param>
     /// <returns></returns>
     public float CalculateDiagnolDistance(Node<T> panel, Node<T> goal)
     {
@@ -150,10 +172,10 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// Creates a list of panels that represent the path found
+    /// Creates a list of nodes that represent the path found
     /// </summary>
-    /// <param name="startPanel">The panel the path starts from</param>
-    /// <param name="endPanel">The panel the path ends with</param>
+    /// <param name="startPanel">The node the path starts from</param>
+    /// <param name="endPanel">The node the path ends with</param>
     private List<Node<T>> ReconstructPath(Node<T> startPanel, Node<T> endPanel)
     {
         List<Node<T>> currentPath = new List<Node<T>>();
@@ -167,7 +189,7 @@ public class Graph<T>
 
             if (iterCount > 100)
                 throw new Exception("InfiniteLoop");
-            //Insert each panel at the beginning of the list so that the path is in the correct order
+            //Insert each node at the beginning of the list so that the path is in the correct order
             currentPath.Insert(0, temp);
             temp = temp.Parent;
         }
@@ -176,11 +198,11 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// Gets whether or not the panel is in the given list
+    /// Gets whether or not the data is in the given list
     /// </summary>
-    /// <param name="panelNodes">The list to look for the panel in</param>
+    /// <param name="panelNodes">The list to look for the data in</param>
     /// <param name="data">The data to search for in the list</param>
-    /// <returns>Whether or not the panel was within the list</returns>
+    /// <returns>Whether or not the data was found in the list</returns>
     private bool ContainsData(List<Node<T>> panelNodes, T data)
     {
         //Loop until a panel that matches the argument is found
@@ -194,11 +216,12 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// Uses A* to find a path from the starting panel to the end panel
+    /// Uses A* to find a path from the starting position to the end position
     /// </summary>
-    /// <param name="startPos">The panel where the path will start</param>
-    /// <param name="endPos">The panel where the path will end</param>
-    /// <param name="allowPartialPath">Whether or not the path should avoid panels that are occupied</param>
+    /// <param name="startNode">The data of the node where the path will start</param>
+    /// <param name="endNode">The data of the node where the path will end</param>
+    /// <param name="condition">The condition that will be used to determine whether or not a node should be avoided</param>
+    /// <param name="allowPartialPath">Whether or not a path to the closest panel possible if the target is unreachable</param>
     /// <returns>A list containing the constructed path</returns>
     public List<Node<T>> GetPath(T startNode, T endNode, NodeCondition condition = null, bool allowPartialPath = false)
     {
@@ -254,11 +277,12 @@ public class Graph<T>
     }
 
     /// <summary>
-    /// Uses A* to find a path from the starting panel to the end panel
+    /// Uses A* to find a path from the starting position to the end position
     /// </summary>
-    /// <param name="startPos">The panel where the path will start</param>
-    /// <param name="endPos">The panel where the path will end</param>
-    /// <param name="allowPartialPath">Whether or not the path should avoid panels that are occupied</param>
+    /// <param name="startPos">The position where the path will start</param>
+    /// <param name="endPos">The position where the path will end</param>
+    /// <param name="condition">The condition that will be used to determine whether or not a node should be avoided</param>
+    /// <param name="allowPartialPath">Whether or not a path to the closest panel possible if the target is unreachable</param>
     /// <returns>A list containing the constructed path</returns>
     public List<Node<T>> GetPath(Vector2 startPos, Vector2 endPos, NodeCondition condition = null, bool allowPartialPath = false)
     {

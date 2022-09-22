@@ -25,9 +25,10 @@ namespace DungeonGeneration
     public enum TileID
     {
         FLOOR = -1,
-        VOID = 510,
+        VOID = 509,
         WALL = 482,
-        POSSIBLEWALL = 3237
+        POSSIBLEWALL = 3237,
+        DOOR = 197
     }
 
     /// <summary>
