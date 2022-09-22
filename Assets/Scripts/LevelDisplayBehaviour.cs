@@ -7,9 +7,13 @@ using UnityEngine.UI;
 
 public class LevelDisplayBehaviour : MonoBehaviour
 {
+    [Tooltip("A reference to a game object in the scene that will generate the level.")]
     [SerializeField] private LevelBehaviour _level;
+    [Tooltip("A reference to the prefab that will be used to represent a room button.")]
     [SerializeField] private RoomButtonBehaviour _iconRef;
+    [Tooltip("Unity's UI event system object.")]
     [SerializeField] private EventSystem _eventSystem;
+    [Tooltip("A reference to the button that will be used to activate the dungeon generation.")]
     [SerializeField] private GameObject _loadDungeonButton;
     private RoomButtonBehaviour[,] _roomButtons;
     private RoomButtonBehaviour _selectedButton;
@@ -24,6 +28,12 @@ public class LevelDisplayBehaviour : MonoBehaviour
         DisplayLevelLayout();
     }
 
+    /// <summary>
+    /// Gets all buttons in cardinal directions surrounding the button at the given position.
+    /// </summary>
+    /// <param name="x">The x position of the button to get neighbors for.</param>
+    /// <param name="y">The y position of the button to get neighbors for.</param>
+    /// <returns></returns>
     private List<RoomButtonBehaviour> GetButtonNeighbors(int x, int y)
     {
         List<RoomButtonBehaviour> buttons = new List<RoomButtonBehaviour>();
@@ -43,7 +53,13 @@ public class LevelDisplayBehaviour : MonoBehaviour
         return buttons;
     }
 
-    public void ToggleInteractable(int x, int y, bool isInteractable)
+    /// <summary>
+    /// Turns on/off the ability for a button to be selected or pressed.
+    /// </summary>
+    /// <param name="x">The x position of the node to toggle.</param>
+    /// <param name="y">The y position of the node to toggle.</param>
+    /// <param name="isInteractable">Whether or not this button should be interactable.</param>
+    public void SetIsInteractable(int x, int y, bool isInteractable)
     {
         if (_roomButtons[x, y] == _selectedButton)
             return;
@@ -51,6 +67,11 @@ public class LevelDisplayBehaviour : MonoBehaviour
         _roomButtons[x,y].interactable = isInteractable;
     }
 
+    /// <summary>
+    /// Updates the currently selected button to be the button at the given position
+    /// </summary>
+    /// <param name="x">The x position of the node to select.</param>
+    /// <param name="y">The y position of the node to select.</param>
     public void UpdateSelection(int x, int y)
     {
         if (!_level.PlayerPath.Contains(_level.RoomGraph.GetNode(x, y)))
@@ -77,10 +98,17 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
     }
 
-    public void AddNodeToPath(int x, int y)
+    /// <summary>
+    /// Trys to add the room at the given position to the players path.
+    /// </summary>
+    /// <param name="x">The x position of the room to add.</param>
+    /// <param name="y">The y position of the room to add.</param>
+    public bool AddNodeToPath(int x, int y)
     {
         if (!_focusActive)
-            return;
+            return false;
+
+        bool added = false;
 
         _focusActive = false;
         _toggleButtons?.Invoke(true);
@@ -91,6 +119,8 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
             if (_level.ExitPosition == new Vector2(x, y))
                 _loadDungeonButton.SetActive(true);
+
+            added = true;
         }
 
         foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
@@ -98,9 +128,14 @@ public class LevelDisplayBehaviour : MonoBehaviour
             if (!button.AddedToPath)
                 button.OnPointerExit(null);
         }
+
+        return added;
     }
 
-    void DisplayLevelLayout()
+    /// <summary>
+    /// Instantiates all the the room buttons that shows the level grid.
+    /// </summary>
+    private void DisplayLevelLayout()
     {
         for (int y = 0; y < _level.Height; y++)
         {
@@ -112,7 +147,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
                 int posX = x;
                 int posY = y;
 
-                _toggleButtons += isInteractable => ToggleInteractable(posX, posY, isInteractable);
+                _toggleButtons += isInteractable => SetIsInteractable(posX, posY, isInteractable);
                 _roomButtons[x,y].Position = new Vector2(posX, posY);
                 _roomButtons[x, y].onClick.AddListener(() => UpdateSelection(posX, posY));
                 _roomButtons[x, y].OnButtonSelect += () => AddNodeToPath(posX, posY);
@@ -123,6 +158,15 @@ public class LevelDisplayBehaviour : MonoBehaviour
         _eventSystem.firstSelectedGameObject = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y].gameObject;
     }
 
+    /// <summary>
+    /// Sets the color for each button for easy identification while debugging,
+    /// White - Open room
+    /// Green - Start room
+    /// Red - End room
+    /// Black - Inked/Blocked room
+    /// </summary>
+    /// <param name="x">The x position of the node to assign color to.</param>
+    /// <param name="y">The y position of the node to assign color to.</param>
     private void AssignColor(int x, int y)
     {
         if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")

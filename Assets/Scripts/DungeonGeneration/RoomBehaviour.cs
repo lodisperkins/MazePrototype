@@ -34,7 +34,7 @@ namespace DungeonGeneration
         public int height { get; set; }
         public int offsetX { get; set; }
         public int offsetY { get; set; }
-        public RoomDescription values { get; set; }
+        public RoomDescription Description { get; set; }
         public Layer[] layers { get; set; }
     }
 
@@ -61,7 +61,13 @@ namespace DungeonGeneration
         public int Height { get => _tileDescriptions.GetLength(0); }
         public int World { get => _world; set => _world = value; }
 
-
+        /// <summary>
+        /// Instantiates a new room that loads with the given description.
+        /// </summary>
+        /// <param name="world">The world the room is being generated in.</param>
+        /// <param name="parentLevel">The level that this room is a part of.</param>
+        /// <param name="description">Data containing details about the room.</param>
+        /// <returns>The newly instantiated room.</returns>
         public static RoomBehaviour MakeRoom(int world, Transform parentLevel, RoomDescription description)
         {
             GameObject room = new GameObject("Room");
@@ -75,6 +81,10 @@ namespace DungeonGeneration
             return roomBehaviour;
         }
 
+        /// <summary>
+        /// Instantiates each tile based on the tiles in the room template.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the ID of the tile hasn't been defined.</exception>
         private void InitializeTiles()
         {
             for (int y = 0; y < _tileDescriptions.GetLength(0); y++)
@@ -121,27 +131,38 @@ namespace DungeonGeneration
                             break;
 
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            throw new ArgumentOutOfRangeException("There is no enumerator value that matches the tile ID loaded. Tile ID was " + (TileID)_data.layers[0].data2D[y, x]);
                     }
                 }
             }
         }
         
+        /// <summary>
+        /// Checks to see if there should be a an exit at the given position.
+        /// Where a door should spawn is based on how the path is drawn and generated in the LevelBehaviour script.
+        /// </summary>
+        /// <param name="x">The x position of the door tile.</param>
+        /// <param name="y">The y position of the door tile.</param>
+        /// <returns></returns>
         private bool CheckDoorSpawn(int x, int y)
         {
-            if (x == Width - 1 && _data.values.hasEastExit)
+            if (x == Width - 1 && _data.Description.hasEastExit)
                 return true;
-            else if (x == 0 && _data.values.hasWestExit)
+            else if (x == 0 && _data.Description.hasWestExit)
                 return true;
-            else if (y == Height - 1 && _data.values.hasNorthExit)
+            else if (y == Height - 1 && _data.Description.hasNorthExit)
                 return true;
-            else if (y == 0 && _data.values.hasSouthExit)
+            else if (y == 0 && _data.Description.hasSouthExit)
                 return true;
 
             return false;
 
         }
 
+        /// <summary>
+        /// Grabs all files in the room template folder and picks one to load at random.
+        /// </summary>
+        /// <param name="description"></param>
         private void LoadRoomData(RoomDescription description)
         {
             _tileDescriptionReferences = Resources.LoadAll<TileDescription>("World" + World + "/TileDescriptions");
@@ -153,21 +174,25 @@ namespace DungeonGeneration
             string dat = reader.ReadToEnd();
 
             _data = JsonConvert.DeserializeObject<RoomData>(dat);
-            _data.values = description;
+            _data.Description = description;
 
-            _tileDescriptions = new TileDescription[_data.layers[0].data2D.GetLength(1), _data.layers[0].data2D.GetLength(0)];
+            _tileDescriptions = new TileDescription[_data.layers[0].data2D.GetLength(0), _data.layers[0].data2D.GetLength(1)];
             InitializeTiles();
         }
 
+        /// <summary>
+        /// Instantiates each room tile and ensures they are evenly spaced.
+        /// </summary>
+        /// <param name="startingPosition">The position in the world to start spawning tiles.</param>
         public void BuildRoom(Vector3 startingPosition)
         {
 
             Vector3 spawnPosition = startingPosition;
 
-            for (int x = 0; x < _tileDescriptions.GetLength(0); x++)
+            for (int y = 0; y < _tileDescriptions.GetLength(0); y++)
             {
                 spawnPosition.x = startingPosition.x;
-                for (int y = 0; y < _tileDescriptions.GetLength(1); y++)
+                for (int x = 0; x < _tileDescriptions.GetLength(1); x++)
                 {
                     GameObject visual = _tileDescriptions[y, x]?.Visual;
 
