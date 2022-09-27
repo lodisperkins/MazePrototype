@@ -1,3 +1,4 @@
+using DungeonGeneration;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,25 @@ public class LevelDisplayBehaviour : MonoBehaviour
     [Tooltip("A reference to the button that will be used to activate the dungeon generation.")]
     [SerializeField] private GameObject _loadDungeonButton;
     private RoomButtonBehaviour[,] _roomButtons;
-    private RoomButtonBehaviour _selectedButton;
+    private static RoomButtonBehaviour _selectedButton;
     private UnityAction<bool> _toggleButtons;
-    private bool _focusActive;
+    private static bool _focusActive;
+    private static bool _eraseActive;
     private List<RoomButtonBehaviour> _selectedButtonNeighbors;
+
+    public static bool EraseActive 
+    { 
+        get => _eraseActive;
+        set
+        {
+            _eraseActive = value;
+
+            if (_eraseActive)
+                _selectedButton.OnButtonSelect();
+
+        }
+    }
+    public static bool FocusActive { get => _focusActive; set => _focusActive = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -80,7 +96,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
             return;
         }
 
-        _focusActive = true;    
+        FocusActive = true;    
         _selectedButton = _roomButtons[x, y];
 
         _toggleButtons?.Invoke(false);
@@ -105,17 +121,18 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// <param name="y">The y position of the room to add.</param>
     public bool AddNodeToPath(int x, int y)
     {
-        if (!_focusActive)
+        if (!FocusActive)
             return false;
 
         bool added = false;
 
-        _focusActive = false;
+        FocusActive = false;
         _toggleButtons?.Invoke(true);
 
         if (_level.AddNodeToPlayerPath(_selectedButton.Position, new Vector2(x, y)))
         {
             _roomButtons[x, y].OnAddedToPath?.Invoke();
+            _roomButtons[x, y].AddedToPath = true;
 
             if (_level.ExitPosition == new Vector2(x, y))
                 _loadDungeonButton.SetActive(true);
@@ -125,11 +142,34 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
         foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
         {
-            if (!button.AddedToPath)
-                button.OnPointerExit(null);
+            button.OnPointerExit(null);
         }
 
         return added;
+    }
+
+    public void MarkNodesForRemoval()
+    {
+        EraseActive = true;
+
+        _toggleButtons?.Invoke(false);
+
+        List<Node<RoomDescription>> removableNodes = _level.GetRemovableNodes();
+
+        foreach (Node<RoomDescription> button in removableNodes)
+        {
+            RoomButtonBehaviour buttonDisplay = _roomButtons[(int)button.Position.x, (int)button.Position.y];
+
+            if (buttonDisplay.enabled)
+            {
+                buttonDisplay.interactable = true;
+                buttonDisplay.MarkedForRemoval = true;
+            }
+
+            //buttonDisplay.OnPointerEnter(null);
+        }
+
+        UpdateAllColors();
     }
 
     /// <summary>
@@ -151,11 +191,20 @@ public class LevelDisplayBehaviour : MonoBehaviour
                 _roomButtons[x,y].Position = new Vector2(posX, posY);
                 _roomButtons[x, y].onClick.AddListener(() => UpdateSelection(posX, posY));
                 _roomButtons[x, y].OnButtonSelect += () => AddNodeToPath(posX, posY);
+                _roomButtons[x, y].OnButtonSelect += () => _selectedButton = _roomButtons[posX, posY];
                 AssignColor(x, y);
             }
         }
 
         _eventSystem.firstSelectedGameObject = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y].gameObject;
+    }
+
+    private void UpdateAllColors()
+    {
+        foreach (RoomButtonBehaviour button in _roomButtons)
+        {
+            AssignColor((int)button.Position.x, (int)button.Position.y);
+        }
     }
 
     /// <summary>
@@ -169,19 +218,35 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// <param name="y">The y position of the node to assign color to.</param>
     private void AssignColor(int x, int y)
     {
+        RoomButtonBehaviour button = _roomButtons[x, y];
+
         if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")
         {
-            _roomButtons[x, y].image.color = Color.green;
-            _level.AddNodeToPlayerPath(new Vector2(x,y), new Vector2(x,y));
+            button.image.color = Color.green;
+            _level.AddNodeToPlayerPath(new Vector2(x, y), new Vector2(x, y));
         }
         else if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "End")
-            _roomButtons[x, y].image.color = Color.red;
+            button.image.color = Color.yellow;
         else if (_level.RoomGraph.GetNode(x, y).Data.inkColor == "Black")
         {
-            _roomButtons[x, y].image.color = Color.black;
-            _roomButtons[x, y].enabled = false;
+            button.image.color = Color.black;
+            button.enabled = false;
         }
+        else if (button.MarkedForRemoval)
+            button.image.color = Color.red;
+        else if (button.AddedToPath)
+            button.image.color = Color.cyan;
         else
-            _roomButtons[x, y].image.color = Color.white;
+            button.image.color = Color.white;
+    }
+
+    private void Update()
+    {
+
+        if (Input.GetButtonDown("Cancel"))
+        {
+            EraseActive = !LevelDisplayBehaviour.EraseActive;
+            MarkNodesForRemoval();
+        }
     }
 }

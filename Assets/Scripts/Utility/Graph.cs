@@ -22,6 +22,11 @@ public class Node<T>
     public float HScore;
     public float FScore;
 
+    public bool CheckIfConnectedToNode(Node<T> node)
+    {
+        return !Edges.Find(edge => edge.Target == node).Equals(default(Edge<T>));
+    }
+
     /// <summary>
     /// Gets the edge that has a target in the given direction
     /// </summary>

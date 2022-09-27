@@ -121,4 +121,5 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _addedToPath: 0
-  _pathColor: {r: 0, g: 0, b: 0, a: 0}
+  _markedForRemoval: 0
+  _pathColor: {r: 0, g: 0, b: 1, a: 1}
