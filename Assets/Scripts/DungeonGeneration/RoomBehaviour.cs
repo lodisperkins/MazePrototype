@@ -55,7 +55,7 @@ namespace DungeonGeneration
         private int _exits;
         private RoomData _data;
         private int _world;
-
+        private Vector3 _spawnPosition;
 
         public int Width { get => _tileDescriptions.GetLength(1); }
         public int Height { get => _tileDescriptions.GetLength(0); }
@@ -187,11 +187,11 @@ namespace DungeonGeneration
         public void BuildRoom(Vector3 startingPosition)
         {
 
-            Vector3 spawnPosition = startingPosition;
+            _spawnPosition = startingPosition;
 
             for (int y = 0; y < _tileDescriptions.GetLength(0); y++)
             {
-                spawnPosition.x = startingPosition.x;
+                _spawnPosition.x = startingPosition.x;
                 for (int x = 0; x < _tileDescriptions.GetLength(1); x++)
                 {
                     GameObject visual = _tileDescriptions[y, x]?.Visual;
@@ -199,13 +199,13 @@ namespace DungeonGeneration
                     if (visual)
                     {
                         GameObject tile = Instantiate(visual, gameObject.transform);
-                        tile.transform.position = spawnPosition;
+                        tile.transform.position = _spawnPosition;
                     }
 
-                    spawnPosition.x++;
+                    _spawnPosition.x++;
                 }
 
-                spawnPosition.z++;
+                _spawnPosition.z++;
             }
 
         }

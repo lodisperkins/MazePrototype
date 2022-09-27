@@ -15,6 +15,7 @@ public class LevelBehaviour : MonoBehaviour
     private Vector2 _travelDirection;
     private Node<RoomDescription> _lastNodeEvaluated;
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
+    private Vector3 _playerSpawnPosition; 
 
     public int Width { get => Template.Width; }
     public int Height { get => Template.Height; }
@@ -24,6 +25,7 @@ public class LevelBehaviour : MonoBehaviour
     public Vector2 StartPosition { get => _startPosition; }
     public Vector2 ExitPosition { get => _exitPosition; }
     public LevelTemplate Template { get => _template; private set => _template = value; }
+    public Vector3 PlayerSpawnPosition { get => _playerSpawnPosition; private set => _playerSpawnPosition = value; }
 
     private void Awake()
     {
@@ -39,6 +41,8 @@ public class LevelBehaviour : MonoBehaviour
 
         PlayerPath = new List<Node<RoomDescription>>();
         PlayerPath.Add(startNode);
+
+
         _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
     }
 
@@ -90,6 +94,12 @@ public class LevelBehaviour : MonoBehaviour
             currentNode.Data.hasSouthExit = true;
             targetNode.Data.hasNorthExit = true;
         }
+
+        if (currentNode.Position == StartPosition)
+            currentNode.Data.hasSouthExit = true;
+
+        if (targetNode.Position == ExitPosition)
+            targetNode.Data.hasNorthExit = true;
 
         //Adds the node to the player path so it can be made into a room.
         PlayerPath.Add(targetNode);
@@ -262,6 +272,9 @@ public class LevelBehaviour : MonoBehaviour
         for (int i = 0; i < PlayerPath.Count; i++)
         {
             RoomBehaviour room = RoomBehaviour.MakeRoom(Template.World, transform, PlayerPath[i].Data);
+
+            if (PlayerSpawnPosition == Vector3.zero)
+                PlayerSpawnPosition = Vector3.Scale(new Vector3(PlayerPath[i].Position.x, 0, PlayerPath[i].Position.y), new Vector3(room.Width, 0, room.Height)) + new Vector3(room.Width / 2, 1, 1);
 
             roomSpawnPosition = Vector3.Scale(new Vector3(PlayerPath[i].Position.x, 0, PlayerPath[i].Position.y) , new Vector3(room.Width, 0, room.Height));
 
