@@ -32,7 +32,7 @@ public class Node<T>
     /// </summary>
     /// <param name="direction">The direction that the edge is pointing towrds</param>
     /// <param name="edge">The edge that was found</param>
-    /// <returns>Fals if the edge couldn't be found</returns>
+    /// <returns>False if the edge couldn't be found</returns>
     public bool GetEdgeForDirection(Direction direction, out Edge<T> edge)
     {
         edge = Edges.Find(item => item.DirectionFromParent == direction);

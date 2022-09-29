@@ -40,12 +40,84 @@ namespace DungeonGeneration
 
     public struct RoomDescription
     {
+        private bool _hasNorthExit;
+        private bool _hasSouthExit;
+        private bool _hasEastExit;
+        private bool _hasWestExit;
+        private int _exitCount;
+
         public string inkColor { get; set; }
         public string stickerType { get; set; }
-        public bool hasNorthExit { get; set; }
-        public bool hasSouthExit { get; set; }
-        public bool hasEastExit { get; set; }
-        public bool hasWestExit { get; set; }
+        public bool hasNorthExit 
+        {
+            get => _hasNorthExit;
+            
+            set
+            {
+                if (value && !_hasNorthExit)
+                    ExitCount++;
+                else if (!value && _hasNorthExit)
+                    ExitCount--;
+
+                _hasNorthExit = value;
+            }
+        }
+        public bool hasSouthExit
+        {
+            get => _hasSouthExit;
+
+            set
+            {
+                if (value && !_hasSouthExit)
+                    ExitCount++;
+                else if (!value && _hasSouthExit)
+                    ExitCount--;
+
+                _hasSouthExit = value;
+            }
+        }
+        public bool hasEastExit
+        {
+            get => _hasEastExit;
+
+            set
+            {
+
+                if (value && !_hasEastExit)
+                    ExitCount++;
+                else if (!value && _hasEastExit)
+                    ExitCount--;
+
+                _hasEastExit = value;
+            }
+        }
+        public bool hasWestExit
+        {
+            get => _hasWestExit;
+
+            set
+            {
+
+                if (value && !_hasWestExit)
+                    ExitCount++;
+                else if (!value && _hasWestExit)
+                    ExitCount--;
+
+                _hasWestExit = value;
+            }
+        }
+
+        public int ExitCount 
+        {
+            get => _exitCount;
+            set
+            {
+                _exitCount = value;
+
+                if (_exitCount < 0)
+                    _exitCount = 0;
+            }
+        }
     }
     
     public class RoomBehaviour : MonoBehaviour

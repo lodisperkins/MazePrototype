@@ -73,7 +73,7 @@ public class LevelBehaviour : MonoBehaviour
             return false;
 
         //Sets the exits for each node based on the direction the path was drawn from.
-        Vector2 direction = (nodePosition - currentPosition).normalized;
+        Vector2 direction = (nodePosition - currentPosition);
         if (direction == Vector2.left)
         {
             currentNode.Data.hasWestExit = true;
@@ -107,65 +107,48 @@ public class LevelBehaviour : MonoBehaviour
     }
     
     /// <summary>
-    /// Adds the node to the list of rooms that the player will be able to walk in.
+    /// Removes the node fom the list of rooms that the player will be able to walk in.
     /// </summary>
-    /// <param name="currentPosition">The position node that the path is being made from.</param>
-    /// <param name="nodePosition">The position of the new node that will be added to the list.</param>
-    /// <returns>Returns false if the target node is already in the player path.</returns>
-    public bool RemoveNodeFromPlayerPath(Vector2 currentPosition, Vector2 nodePosition)
+    /// <param name="nodePosition">The position of the node that will be removed to the list.</param>
+    /// <returns>Returns false if the target node isn't in the player path.</returns>
+    public bool RemoveNodeFromPlayerPath(Vector2 nodePosition)
     {
         //Gets a reference to both nodes using the graph position.
-        Node<RoomDescription> currentNode = _roomGraph.GetNode(currentPosition);
         Node<RoomDescription> targetNode = _roomGraph.GetNode(nodePosition);
 
         //Return if the node is already in the list to avoid repeats.
         if (!PlayerPath.Contains(targetNode))
             return false;
 
-        //Sets the exits for each node based on the direction the path was drawn from.
-        Vector2 direction = (nodePosition - currentPosition).normalized;
-        if (direction == Vector2.left)
+        //Changes the available exits for the room being removed.
+        Edge<RoomDescription> edge;
+
+        if (targetNode.GetEdgeForDirection(Direction.WEST, out edge))
         {
-            currentNode.Data.hasWestExit = false;
-            targetNode.Data.hasEastExit = false;
-        }
-        else if (direction == Vector2.right)
-        {
-            currentNode.Data.hasEastExit = false;
+            edge.Target.Data.hasEastExit = false;
             targetNode.Data.hasWestExit = false;
         }
-        else if (direction == Vector2.up)
+        if (targetNode.GetEdgeForDirection(Direction.EAST, out edge))
         {
-            currentNode.Data.hasNorthExit = false;
+            edge.Target.Data.hasWestExit = false;
+            targetNode.Data.hasEastExit = false;
+        }
+        if (targetNode.GetEdgeForDirection(Direction.NORTH, out edge))
+        {
+            edge.Target.Data.hasSouthExit = false;
+            targetNode.Data.hasNorthExit = false;
+        }
+        if (targetNode.GetEdgeForDirection(Direction.SOUTH, out edge))
+        {
+            edge.Target.Data.hasNorthExit = false;
             targetNode.Data.hasSouthExit = false;
         }
-        else if (direction == Vector2.down)
-        {
-            currentNode.Data.hasSouthExit = false;
-            targetNode.Data.hasNorthExit = false;
-        }
-
-        if (currentNode.Position == StartPosition)
-            currentNode.Data.hasSouthExit = false;
-
-        if (targetNode.Position == ExitPosition)
-            targetNode.Data.hasNorthExit = false;
 
         //Adds the node to the player path so it can be made into a room.
         PlayerPath.Remove(targetNode);
         return true;
     }
 
-    public List<Node<RoomDescription>> GetRemovableNodes()
-    {
-        List<Node<RoomDescription>> removableNodes = _playerPath.FindAll(node => node.Edges.Count <= 2);
-        Node<RoomDescription> start = _roomGraph.GetNode(_startPosition);
-        Node<RoomDescription> end = _roomGraph.GetNode(_exitPosition);
-
-        removableNodes.RemoveAll(node => !node.CheckIfConnectedToNode(start) && !node.CheckIfConnectedToNode(end) && node.Edges.Count == 2);
-
-        return removableNodes;
-    }
 
     /// <summary>
     /// Checks to see if the node can be passed through when finding the default path.
