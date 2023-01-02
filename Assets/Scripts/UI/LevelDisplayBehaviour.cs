@@ -21,6 +21,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private UnityAction<bool> _toggleButtons;
     private static bool _focusActive;
     private static bool _eraseActive;
+    private static bool _drawActive;
     private List<RoomButtonBehaviour> _selectedButtonNeighbors;
     private List<RoomButtonBehaviour> _currentRemovableNodes;
 
@@ -130,9 +131,11 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
 
         //Deactivate all other buttons so that the player can only focus on the selected node.
-        FocusActive = true;    
+        //FocusActive = true;    
         _selectedButton = _roomButtons[x, y];
-        _toggleButtons?.Invoke(false);
+        //_toggleButtons?.Invoke(false);
+
+        
 
         //Make all the neighbors of the selected button interactable.
         _selectedButtonNeighbors = GetButtonNeighbors(x, y);
@@ -314,6 +317,14 @@ public class LevelDisplayBehaviour : MonoBehaviour
         UpdateAllColors();
     }
 
+    private void UseNode(int posX, int posY)
+    {
+        if (EraseActive)
+            RemoveNodeFromPath(posX, posY);
+        else if (_drawActive)
+            AddNodeToPath(posX, posY);
+    }
+
     /// <summary>
     /// Instantiates all the the room buttons that shows the level grid.
     /// </summary>
@@ -331,9 +342,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
                 _toggleButtons += isInteractable => SetIsInteractable(posX, posY, isInteractable);
                 _roomButtons[x,y].Position = new Vector2(posX, posY);
-                _roomButtons[x, y].onClick.AddListener(() => UpdateSelection(posX, posY));
-                _roomButtons[x, y].onClick.AddListener(() => RemoveNodeFromPath(posX, posY));
-                _roomButtons[x, y].OnButtonSelect += () => AddNodeToPath(posX, posY);
+                _roomButtons[x, y].OnButtonSelect += () => UseNode(posX, posY);
                 AssignColor(x, y);
             }
         }
@@ -389,13 +398,17 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private void Update()
     {
         //Toggle erase mode when player presses cancel button.
-        if (Input.GetButtonDown("Cancel"))
+        if (Input.GetButton("Cancel"))
         {
-            EraseActive = !LevelDisplayBehaviour.EraseActive;
-            if (EraseActive)
-                MarkNodesForRemoval();
-            else 
-                UnmarkNodesForRemoval();
+            EraseActive = true;
+            MarkNodesForRemoval();
         }
+        else if (EraseActive)
+        {
+            EraseActive = false;
+            UnmarkNodesForRemoval();
+        }
+
+
     }
 }
