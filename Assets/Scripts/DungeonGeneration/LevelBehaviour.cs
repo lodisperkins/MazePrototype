@@ -105,6 +105,29 @@ public class LevelBehaviour : MonoBehaviour
         PlayerPath.Add(targetNode);
         return true;
     }
+
+    public List<Node<RoomDescription>> GetConnectedRooms(Vector2 position)
+    {
+        if (PlayerPath.Count == 0)
+            return null;
+
+        Node<RoomDescription> node = PlayerPath.Find(room => room.Position == position);
+
+        if (node == null)
+            return null;
+
+        List<Node<RoomDescription>> nodes = new List<Node<RoomDescription>>();
+
+        for (int i = 0; i < 4; i++)
+        {
+            Edge<RoomDescription> edge;
+
+            if (node.GetEdgeForDirection((Direction)i, out edge))
+                nodes.Add(edge.Target);
+        }
+
+        return nodes;
+    }
     
     /// <summary>
     /// Removes the node fom the list of rooms that the player will be able to walk in.

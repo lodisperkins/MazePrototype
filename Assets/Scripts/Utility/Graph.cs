@@ -99,8 +99,8 @@ public class Graph<T>
                 if (y > 0)
                 { // north connection
                     Node<T> other = _graph[x, y - 1];
-                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.NORTH });
-                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.SOUTH });
+                    node.Edges.Add(new Edge<T> { Target = other, Cost = 1, DirectionFromParent = Direction.SOUTH });
+                    other.Edges.Add(new Edge<T> { Target = node, Cost = 1, DirectionFromParent = Direction.NORTH });
                 }
                 // Set the tile on the grid
                 _graph[x, y] = node;

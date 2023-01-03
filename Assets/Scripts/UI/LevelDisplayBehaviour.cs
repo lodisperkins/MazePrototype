@@ -158,14 +158,13 @@ public class LevelDisplayBehaviour : MonoBehaviour
     public bool AddNodeToPath(int x, int y)
     {
         //Return if the node hasn't been selected to draw from.
-        if (!FocusActive)
+        if (!_drawActive)
             return false;
 
         bool added = false;
 
-        //Disable focus so the player can select a new node to draw from.
-        FocusActive = false;
-        _toggleButtons?.Invoke(true);
+        if (_level.PlayerPath.Find(node => node.Position == _selectedButton.Position) == null)
+            return false;
 
         //Try to add the node to the player path. If successful...
         if (_level.AddNodeToPlayerPath(_selectedButton.Position, new Vector2(x, y)))
@@ -182,10 +181,10 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
 
         //Updates the images for all the neighbors.
-        foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
-        {
-            button.OnPointerExit(null);
-        }
+        //foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
+        //{
+        //    button.OnPointerExit(null);
+        //}
 
         return added;
     }
@@ -205,6 +204,9 @@ public class LevelDisplayBehaviour : MonoBehaviour
         bool removed = false;
 
         RoomButtonBehaviour buttonToRemove = _roomButtons[x, y];
+
+        if (!buttonToRemove.MarkedForRemoval)
+            return false;
 
         //Try to remove the node from the player path. If successful...
         if (_level.RemoveNodeFromPlayerPath(new Vector2(x, y)))
@@ -230,10 +232,10 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
 
         //Updates the images for all the neighbors.
-        foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
-        {
-            button.OnPointerExit(null);
-        }
+        //foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
+        //{
+        //    button.OnPointerExit(null);
+        //}
 
         //Updates the images for all nodes on the grid to show what nodes are now erasable.
         MarkNodesForRemoval();
@@ -257,10 +259,8 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
             RoomButtonBehaviour button = _roomButtons[(int)node.Position.x, (int)node.Position.y];
 
-            List<RoomButtonBehaviour> buttonNeighbors = GetButtonNeighbors(button);
-
             //The button only has one neighbor added to the path or has one exit...
-            if (buttonNeighbors.FindAll(neighbor => neighbor.AddedToPath).Count == 1 || node.Data.ExitCount <= 1)
+            if (node.Data.ExitCount <= 1)
                 //...add to the list of nodes that can be removed.
                 removableNodes.Add(button);
         }
@@ -273,6 +273,9 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// </summary>
     private void UnmarkNodesForRemoval()
     {
+        if (_currentRemovableNodes == null || _currentRemovableNodes.Count == 0)
+            return;
+
         //Unmark all the nodes in the list so that they are no longer labeled as removable.
         foreach (RoomButtonBehaviour button in _currentRemovableNodes)
             button.MarkedForRemoval = false;
@@ -292,9 +295,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// </summary>
     private void MarkNodesForRemoval()
     {
-        //Turn off all other buttons so that only the removable nodes can be interacted with.
-        _toggleButtons?.Invoke(false);
-        _selectedButton.interactable = false;
 
         //Finds all removable nodes.
         _currentRemovableNodes = GetRemovableNodes();
@@ -309,20 +309,20 @@ public class LevelDisplayBehaviour : MonoBehaviour
             }
         }
 
-        //If there are still nodes that can be removed...
-        if (_currentRemovableNodes.Count > 0)
-            //...highlight the first node in the list.
-            _eventSystem.SetSelectedGameObject(_currentRemovableNodes[0].gameObject);
-
         UpdateAllColors();
     }
 
     private void UseNode(int posX, int posY)
     {
+        if (_selectedButton.image.color == Color.black)
+            return;
+
         if (EraseActive)
             RemoveNodeFromPath(posX, posY);
         else if (_drawActive)
             AddNodeToPath(posX, posY);
+
+        _selectedButton = _roomButtons[posX, posY];
     }
 
     /// <summary>
@@ -348,6 +348,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
 
         _eventSystem.firstSelectedGameObject = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y].gameObject;
+        _selectedButton = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y];
     }
 
     /// <summary>
@@ -398,17 +399,17 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private void Update()
     {
         //Toggle erase mode when player presses cancel button.
-        if (Input.GetButton("Cancel"))
+        if (Input.GetButtonDown("Cancel"))
         {
             EraseActive = true;
             MarkNodesForRemoval();
         }
-        else if (EraseActive)
+        else if ((EraseActive && Input.GetButtonUp("Cancel")) || _drawActive)
         {
             EraseActive = false;
             UnmarkNodesForRemoval();
         }
 
-
+        _drawActive = Input.GetButton("Submit");
     }
 }
