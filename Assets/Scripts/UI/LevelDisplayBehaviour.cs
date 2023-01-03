@@ -130,12 +130,8 @@ public class LevelDisplayBehaviour : MonoBehaviour
             return;
         }
 
-        //Deactivate all other buttons so that the player can only focus on the selected node.
-        //FocusActive = true;    
+        //Deactivate all other buttons so that the player can only focus on the selected node.   
         _selectedButton = _roomButtons[x, y];
-        //_toggleButtons?.Invoke(false);
-
-        
 
         //Make all the neighbors of the selected button interactable.
         _selectedButtonNeighbors = GetButtonNeighbors(x, y);
@@ -179,12 +175,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
             added = true;
         }
-
-        //Updates the images for all the neighbors.
-        //foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
-        //{
-        //    button.OnPointerExit(null);
-        //}
 
         return added;
     }
@@ -231,12 +221,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
             removed = true;
         }
 
-        //Updates the images for all the neighbors.
-        //foreach (RoomButtonBehaviour button in _selectedButtonNeighbors)
-        //{
-        //    button.OnPointerExit(null);
-        //}
-
         //Updates the images for all nodes on the grid to show what nodes are now erasable.
         MarkNodesForRemoval();
         return removed;
@@ -260,7 +244,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
             RoomButtonBehaviour button = _roomButtons[(int)node.Position.x, (int)node.Position.y];
 
             //The button only has one neighbor added to the path or has one exit...
-            if (node.Data.ExitCount <= 1)
+            if (node.Data.ExitCount <= 1 || (node.Position == _level.ExitPosition && node.Data.ExitCount <= 2))
                 //...add to the list of nodes that can be removed.
                 removableNodes.Add(button);
         }
@@ -312,16 +296,24 @@ public class LevelDisplayBehaviour : MonoBehaviour
         UpdateAllColors();
     }
 
+    /// <summary>
+    /// Adds or removes a node based on the current mode that's active.
+    /// </summary>
+    /// <param name="posX">The x position on the graph for the node to remove.</param>
+    /// <param name="posY">The y position on the graph for the node to remove.</param>
     private void UseNode(int posX, int posY)
     {
+        //Return if the node is an ink blot.
         if (_selectedButton.image.color == Color.black)
             return;
 
+        //Remove or add based on the current mode active.
         if (EraseActive)
-            RemoveNodeFromPath(posX, posY);
+            RemoveNodeFromPath((int)_selectedButton.Position.x, (int)_selectedButton.Position.y);
         else if (_drawActive)
             AddNodeToPath(posX, posY);
 
+        //Update the button that is selected after since adding and removing needs to know about the previous selection.
         _selectedButton = _roomButtons[posX, posY];
     }
 
@@ -330,20 +322,56 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// </summary>
     private void DisplayLevelLayout()
     {
+        //Loop through level grid to spawn buttons.
         for (int y = 0; y < _level.Height; y++)
         {
             for (int x = 0; x < _level.Width; x++)
             {
+                //Spawn a new button with a name that matches its coordinate.
                 _roomButtons[x, y] = Instantiate(_iconRef, gameObject.transform);
-                _roomButtons[x, y].name = "(" + x + "," + y + ")";
+                RoomButtonBehaviour currentButton = _roomButtons[x, y];
+                currentButton.name = "(" + x + "," + y + ")";
 
+                //Two temporary variables are created to be used with delegates.
+                //This is because variables declared inside of loops can't keep their values when passed as delegate parameters.
                 int posX = x;
                 int posY = y;
 
                 _toggleButtons += isInteractable => SetIsInteractable(posX, posY, isInteractable);
-                _roomButtons[x,y].Position = new Vector2(posX, posY);
-                _roomButtons[x, y].OnButtonSelect += () => UseNode(posX, posY);
+                currentButton.Position = new Vector2(posX, posY);
+                currentButton.OnButtonSelect += () => UseNode(posX, posY);
                 AssignColor(x, y);
+
+                if (x > 0)
+                { // west connection
+                    RoomButtonBehaviour other = _roomButtons[x - 1, y];
+                    Navigation currentButtonNavigation = currentButton.navigation;
+                    currentButtonNavigation.mode = Navigation.Mode.Explicit;
+
+                    currentButtonNavigation.selectOnLeft = other;
+                    currentButton.navigation = currentButtonNavigation;
+
+                    Navigation otherNavigation = other.navigation;
+                    otherNavigation.mode = Navigation.Mode.Explicit;
+
+                    otherNavigation.selectOnRight = currentButton;
+                    other.navigation = otherNavigation;
+                }
+                if (y > 0)
+                { // north connection
+                    RoomButtonBehaviour other = _roomButtons[x, y - 1];
+                    Navigation currentButtonNavigation = currentButton.navigation;
+                    currentButtonNavigation.mode = Navigation.Mode.Explicit;
+
+                    currentButtonNavigation.selectOnDown = other;
+                    currentButton.navigation = currentButtonNavigation;
+
+                    Navigation otherNavigation = other.navigation;
+                    otherNavigation.mode = Navigation.Mode.Explicit;
+
+                    otherNavigation.selectOnUp = currentButton;
+                    other.navigation = otherNavigation;
+                }
             }
         }
 
