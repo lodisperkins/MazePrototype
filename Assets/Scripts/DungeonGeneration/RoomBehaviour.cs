@@ -45,10 +45,10 @@ namespace DungeonGeneration
         private bool _hasEastExit;
         private bool _hasWestExit;
         private int _exitCount;
-
+         
         public string inkColor { get; set; }
         public string stickerType { get; set; }
-        public bool hasNorthExit 
+        public bool HasNorthExit 
         {
             get => _hasNorthExit;
             
@@ -62,7 +62,7 @@ namespace DungeonGeneration
                 _hasNorthExit = value;
             }
         }
-        public bool hasSouthExit
+        public bool HasSouthExit
         {
             get => _hasSouthExit;
 
@@ -76,7 +76,7 @@ namespace DungeonGeneration
                 _hasSouthExit = value;
             }
         }
-        public bool hasEastExit
+        public bool HasEastExit
         {
             get => _hasEastExit;
 
@@ -91,7 +91,7 @@ namespace DungeonGeneration
                 _hasEastExit = value;
             }
         }
-        public bool hasWestExit
+        public bool HasWestExit
         {
             get => _hasWestExit;
 
@@ -218,13 +218,13 @@ namespace DungeonGeneration
         /// <returns></returns>
         private bool CheckDoorSpawn(int x, int y)
         {
-            if (x == Width - 1 && _data.Description.hasEastExit)
+            if (x == Width - 1 && _data.Description.HasEastExit)
                 return true;
-            else if (x == 0 && _data.Description.hasWestExit)
+            else if (x == 0 && _data.Description.HasWestExit)
                 return true;
-            else if (y == Height - 1 && _data.Description.hasNorthExit)
+            else if (y == Height - 1 && _data.Description.HasNorthExit)
                 return true;
-            else if (y == 0 && _data.Description.hasSouthExit)
+            else if (y == 0 && _data.Description.HasSouthExit)
                 return true;
 
             return false;

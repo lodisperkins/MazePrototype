@@ -8,19 +8,16 @@ using System;
 public class LevelBehaviour : MonoBehaviour
 {
     private Graph<RoomDescription> _roomGraph;
-    private List<RoomDescription> _openRooms;
     private LevelTemplate _template;
     private Vector2 _startPosition = new Vector2( -1, -1 );
     private Vector2 _exitPosition = new Vector2(-1, -1);
     private Vector2 _travelDirection;
-    private Node<RoomDescription> _lastNodeEvaluated;
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
     private Vector3 _playerSpawnPosition; 
 
     public int Width { get => Template.Width; }
     public int Height { get => Template.Height; }
     public Graph<RoomDescription> RoomGraph { get => _roomGraph; }
-    public List<RoomDescription> OpenRooms { get => _openRooms; }
     public List<Node<RoomDescription>> PlayerPath { get => _playerPath; private set => _playerPath = value; }
     public Vector2 StartPosition { get => _startPosition; }
     public Vector2 ExitPosition { get => _exitPosition; }
@@ -76,30 +73,30 @@ public class LevelBehaviour : MonoBehaviour
         Vector2 direction = (nodePosition - currentPosition);
         if (direction == Vector2.left)
         {
-            currentNode.Data.hasWestExit = true;
-            targetNode.Data.hasEastExit = true;
+            currentNode.Data.HasWestExit = true;
+            targetNode.Data.HasEastExit = true;
         }
         else if (direction == Vector2.right)
         {
-            currentNode.Data.hasEastExit = true;
-            targetNode.Data.hasWestExit = true;
+            currentNode.Data.HasEastExit = true;
+            targetNode.Data.HasWestExit = true;
         }
         else if (direction == Vector2.up)
         {
-            currentNode.Data.hasNorthExit = true;
-            targetNode.Data.hasSouthExit = true;
+            currentNode.Data.HasNorthExit = true;
+            targetNode.Data.HasSouthExit = true;
         }
         else if (direction == Vector2.down)
         {
-            currentNode.Data.hasSouthExit = true;
-            targetNode.Data.hasNorthExit = true;
+            currentNode.Data.HasSouthExit = true;
+            targetNode.Data.HasNorthExit = true;
         }
 
         if (currentNode.Position == StartPosition)
-            currentNode.Data.hasSouthExit = true;
+            currentNode.Data.HasSouthExit = true;
 
         if (targetNode.Position == ExitPosition)
-            targetNode.Data.hasNorthExit = true;
+            targetNode.Data.HasNorthExit = true;
 
         //Adds the node to the player path so it can be made into a room.
         PlayerPath.Add(targetNode);
@@ -154,23 +151,23 @@ public class LevelBehaviour : MonoBehaviour
 
         if (targetNode.GetEdgeForDirection(Direction.WEST, out edge))
         {
-            edge.Target.Data.hasEastExit = false;
-            targetNode.Data.hasWestExit = false;
+            edge.Target.Data.HasEastExit = false;
+            targetNode.Data.HasWestExit = false;
         }
         if (targetNode.GetEdgeForDirection(Direction.EAST, out edge))
         {
-            edge.Target.Data.hasWestExit = false;
-            targetNode.Data.hasEastExit = false;
+            edge.Target.Data.HasWestExit = false;
+            targetNode.Data.HasEastExit = false;
         }
         if (targetNode.GetEdgeForDirection(Direction.NORTH, out edge))
         {
-            edge.Target.Data.hasSouthExit = false;
-            targetNode.Data.hasNorthExit = false;
+            edge.Target.Data.HasSouthExit = false;
+            targetNode.Data.HasNorthExit = false;
         }
         if (targetNode.GetEdgeForDirection(Direction.SOUTH, out edge))
         {
-            edge.Target.Data.hasNorthExit = false;
-            targetNode.Data.hasSouthExit = false;
+            edge.Target.Data.HasNorthExit = false;
+            targetNode.Data.HasSouthExit = false;
         }
 
         //Adds the node to the player path so it can be made into a room.
@@ -187,8 +184,6 @@ public class LevelBehaviour : MonoBehaviour
     /// <returns></returns>
     private bool CheckInvalidNode(Node<RoomDescription> currentNode, Node<RoomDescription> nextNode)
     {
-        _lastNodeEvaluated = nextNode;
-
         if (nextNode.Position.x - currentNode.Position.x < 0 && _travelDirection == Vector2.right)
             return true;
         if (nextNode.Position.y - currentNode.Position.y < 0 && _travelDirection == Vector2.up)
