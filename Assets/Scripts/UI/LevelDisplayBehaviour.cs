@@ -159,6 +159,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
         bool added = false;
 
+        //If the cursor isn't over a room that's in the path.
         if (_level.PlayerPath.Find(node => node.Position == _selectedButton.Position) == null)
             return false;
 
@@ -336,21 +337,31 @@ public class LevelDisplayBehaviour : MonoBehaviour
                 //This is because variables declared inside of loops can't keep their values when passed as delegate parameters.
                 int posX = x;
                 int posY = y;
-
+                
                 _toggleButtons += isInteractable => SetIsInteractable(posX, posY, isInteractable);
+
+                //Initialize default button values.
                 currentButton.Position = new Vector2(posX, posY);
                 currentButton.OnButtonSelect += () => UseNode(posX, posY);
                 AssignColor(x, y);
 
+                //Manually sets up navigation connections between buttons.
+                //Unity connects all buttons to each other automatically which
+                //causes unintentional behaviour.
                 if (x > 0)
-                { // west connection
+                { 
+                    // west connection
+
                     RoomButtonBehaviour other = _roomButtons[x - 1, y];
+
+                    //Create a new navigation object with custom options for the current button.
                     Navigation currentButtonNavigation = currentButton.navigation;
                     currentButtonNavigation.mode = Navigation.Mode.Explicit;
 
                     currentButtonNavigation.selectOnLeft = other;
                     currentButton.navigation = currentButtonNavigation;
 
+                    //Create a new navigation object with custom options for the west button.
                     Navigation otherNavigation = other.navigation;
                     otherNavigation.mode = Navigation.Mode.Explicit;
 
@@ -358,14 +369,19 @@ public class LevelDisplayBehaviour : MonoBehaviour
                     other.navigation = otherNavigation;
                 }
                 if (y > 0)
-                { // north connection
+                { 
+                    // north connection
+
                     RoomButtonBehaviour other = _roomButtons[x, y - 1];
+
+                    //Create a new navigation object with custom options for the current button.
                     Navigation currentButtonNavigation = currentButton.navigation;
                     currentButtonNavigation.mode = Navigation.Mode.Explicit;
 
                     currentButtonNavigation.selectOnDown = other;
                     currentButton.navigation = currentButtonNavigation;
 
+                    //Create a new navigation object with custom options for the north button.
                     Navigation otherNavigation = other.navigation;
                     otherNavigation.mode = Navigation.Mode.Explicit;
 
@@ -375,6 +391,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
             }
         }
 
+        //Sets the first room as the first selected UI item.
         _eventSystem.firstSelectedGameObject = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y].gameObject;
         _selectedButton = _roomButtons[(int)_level.StartPosition.x, (int)_level.StartPosition.y];
     }

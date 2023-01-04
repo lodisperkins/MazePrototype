@@ -106,18 +106,24 @@ public class LevelBehaviour : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Gets the rooms that have a door that connects to the room at the given position.
+    /// </summary>
+    /// <param name="position">The position of the room to check in the dungeon.</param>
+    /// <returns>A list of graph nodes that store information about the room.</returns>
     public List<Node<RoomDescription>> GetConnectedRooms(Vector2 position)
     {
+        //Return if there are no connected rooms in the path.
         if (PlayerPath.Count == 0)
             return null;
 
+        //Return if the position isn't in the path. Rooms not in the path will not have open doors.
         Node<RoomDescription> node = PlayerPath.Find(room => room.Position == position);
-
         if (node == null)
             return null;
 
+        //Gets the nodes connected to each different direction.
         List<Node<RoomDescription>> nodes = new List<Node<RoomDescription>>();
-
         for (int i = 0; i < 4; i++)
         {
             Edge<RoomDescription> edge;
