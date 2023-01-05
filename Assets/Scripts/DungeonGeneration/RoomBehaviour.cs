@@ -124,7 +124,6 @@ namespace DungeonGeneration
     {
         private TileDescription[] _tileDescriptionReferences;
         private TileDescription[,] _tileDescriptions;
-        private int _exits;
         private RoomData _data;
         private int _world;
         private Vector3 _spawnPosition;

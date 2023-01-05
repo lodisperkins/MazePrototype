@@ -19,7 +19,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private RoomButtonBehaviour[,] _roomButtons;
     private static RoomButtonBehaviour _selectedButton;
     private UnityAction<bool> _toggleButtons;
-    private static bool _focusActive;
     private static bool _eraseActive;
     private static bool _drawActive;
     private List<RoomButtonBehaviour> _selectedButtonNeighbors;
@@ -37,7 +36,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
         }
     }
-    public static bool FocusActive { get => _focusActive; set => _focusActive = value; }
+    public static bool DrawActive { get => _drawActive; set => _drawActive = value; }
 
     // Start is called before the first frame update
     void Start()

@@ -60,8 +60,6 @@ public class Graph<T>
     private int _height;
     private Node<T>[,] _graph;
 
-    public Graph() { }
-
     public Graph(int width, int height)
     {
         _width = width;
