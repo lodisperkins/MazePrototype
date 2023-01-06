@@ -54,7 +54,7 @@ public struct Edge<T>
 
 public class Graph<T>
 {
-    public delegate bool NodeCondition(Node<T> currentNode, Node<T> nextNode);
+    public delegate bool NodeCondition(Node<T> currentNode, Node<T> nextNode = null);
 
     private int _width;
     private int _height;
@@ -338,5 +338,41 @@ public class Graph<T>
             return GetPath(startPos, newGoal.Position, condition);
 
         return new List<Node<T>>();
+    }
+
+    /// <summary>
+    /// Uses breadth first search to find a specific node.
+    /// </summary>
+    /// <param name="startPos">The position in the graph to start searching from.</param>
+    /// <param name="condition">The condition to use while searching.</param>
+    /// <returns>The first node that makes the given condition true.</returns> 
+    public Node<T> FindNode(Vector2 startPos, NodeCondition condition)
+    {
+        List<Node<T>> queue = new List<Node<T>>();
+        List<Node<T>> visited = new List<Node<T>>();    
+
+        Node<T> current = GetNode(startPos);
+
+        queue.Add(current);
+
+        while (queue.Count > 0)
+        {
+            current = queue[0];
+            queue.Remove(current);
+
+            if (condition.Invoke(current))
+                return current;
+
+            foreach (Edge<T> edge in current.Edges)
+            {
+                if (!visited.Contains(edge.Target))
+                {
+                    visited.Add(edge.Target);
+                    queue.Add(edge.Target);
+                }
+            }
+        }
+
+        return null;
     }
 }

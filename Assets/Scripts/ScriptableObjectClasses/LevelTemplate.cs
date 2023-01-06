@@ -21,6 +21,8 @@ namespace DungeonGeneration
         [SerializeField]
         private int _trapAmount;
         [SerializeField]
+        private int _keyAmount;
+        [SerializeField]
         private int _width;
         [SerializeField]
         private int _height;
@@ -38,5 +40,6 @@ namespace DungeonGeneration
         public int ComplexityScore { get => _complexityScore; }
         public int DefaultGraphite { get => _defaultGraphite; }
         public int World { get => _world; set => _world = value; }
+        public int KeyAmount { get => _keyAmount; }
     }
 }

@@ -419,19 +419,22 @@ public class LevelDisplayBehaviour : MonoBehaviour
     {
         RoomButtonBehaviour button = _roomButtons[x, y];
 
-        if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "Start")
+        Node<RoomDescription> node = _level.RoomGraph.GetNode(x, y);
+        if (node.Data.stickerType == "Start")
         {
             button.image.color = Color.green;
             _level.AddNodeToPlayerPath(new Vector2(x, y), new Vector2(x, y));
             button.AddedToPath = true;
         }
-        else if (_level.RoomGraph.GetNode(x, y).Data.stickerType == "End")
+        else if (node.Data.stickerType == "End")
             button.image.color = Color.yellow;
-        else if (_level.RoomGraph.GetNode(x, y).Data.inkColor == "Black")
+        else if (node.Data.inkColor == "Black")
         {
             button.image.color = Color.black;
             button.enabled = false;
         }
+        else if (node.Data.stickerType == "Key")
+            button.image.color = Color.blue;
         else if (button.MarkedForRemoval)
             button.image.color = Color.red / 2;
         else if (button.AddedToPath)

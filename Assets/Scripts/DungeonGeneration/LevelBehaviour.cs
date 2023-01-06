@@ -4,16 +4,25 @@ using DungeonGeneration;
 using System.IO;
 using Newtonsoft.Json;
 using System;
+using Random = UnityEngine.Random;
 
 public class LevelBehaviour : MonoBehaviour
 {
     private Graph<RoomDescription> _roomGraph;
     private LevelTemplate _template;
+
     private Vector2 _startPosition = new Vector2( -1, -1 );
+    private Vector3 _playerSpawnPosition;
     private Vector2 _exitPosition = new Vector2(-1, -1);
+
+    private Vector2[] _keyPositions;
+    private int _keyDistanceFromStart;
+    private int _keyDistanceFromPath;
+
     private Vector2 _travelDirection;
+
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
-    private Vector3 _playerSpawnPosition; 
+    private List<Node<RoomDescription>> _defaultPath;
 
     public int Width { get => Template.Width; }
     public int Height { get => Template.Height; }
@@ -23,6 +32,7 @@ public class LevelBehaviour : MonoBehaviour
     public Vector2 ExitPosition { get => _exitPosition; }
     public LevelTemplate Template { get => _template; private set => _template = value; }
     public Vector3 PlayerSpawnPosition { get => _playerSpawnPosition; private set => _playerSpawnPosition = value; }
+    public Vector2[] KeyPositions { get => _keyPositions; private set => _keyPositions = value; }
 
     private void Awake()
     {
@@ -31,6 +41,7 @@ public class LevelBehaviour : MonoBehaviour
         GenerateShapes();
         PlaceStartExit();
         FindPath();
+        PlaceKeys();
         //Mark the nodes at the start an end positions so they can be displayed correctly.
         Node<RoomDescription> startNode = _roomGraph.GetNode(_startPosition);
         Node<RoomDescription> endNode = _roomGraph.GetNode(ExitPosition);
@@ -211,7 +222,10 @@ public class LevelBehaviour : MonoBehaviour
 
             //Return if the exit was found successfully.
             if (path[path.Count - 1].Position == _exitPosition)
+            {
+                _defaultPath = path;
                 return;
+            }
             //Otherwise if the length of the path has exceeded the graphite limit...
             if (path.Count >= Template.DefaultGraphite - nodesTravelled)
             {
@@ -300,6 +314,30 @@ public class LevelBehaviour : MonoBehaviour
                 else if (_startPosition != new Vector2(-1, -1) && _exitPosition != new Vector2(-1, -1))
                     return;
             }
+        }
+    }
+
+    private void PlaceKeys()
+    {
+        List<Node<RoomDescription>> spawnTargets = null;
+
+        spawnTargets = _defaultPath.FindAll(room => Vector2.Distance(room.Position, _startPosition) >= _keyDistanceFromStart);
+
+        for (int i = 0; i < _template.KeyAmount; i++)
+        {
+            int spawnIndex = Random.Range(0, spawnTargets.Count);
+
+            Node<RoomDescription> spawnTarget = spawnTargets[spawnIndex];
+
+            Node<RoomDescription> spawnRoom = _roomGraph.FindNode(spawnTarget.Position, (node1, node2) =>
+            {
+                return !_defaultPath.Contains(node1) && Vector2.Distance(node1.Position, _startPosition) >= _keyDistanceFromStart
+                && node1.Position != _exitPosition;
+            });
+
+            spawnRoom.Data.stickerType = "Key";
+
+            _keyPositions[i] = spawnRoom.Position;
         }
     }
 
