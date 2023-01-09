@@ -21,6 +21,7 @@ namespace DungeonGeneration
         [SerializeField]
         private int _trapAmount;
         [SerializeField]
+        [Range(0, 3)]
         private int _keyAmount;
         [SerializeField]
         private int _width;

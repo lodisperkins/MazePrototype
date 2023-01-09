@@ -16,7 +16,8 @@ public class LevelBehaviour : MonoBehaviour
     private Vector2 _exitPosition = new Vector2(-1, -1);
 
     private Vector2[] _keyPositions;
-    private int _keyDistanceFromStart;
+    [SerializeField] private int _keyDistanceFromStart;
+    [SerializeField] private int _keyDistanceFromKey;
     private int _keyDistanceFromPath;
 
     private Vector2 _travelDirection;
@@ -38,10 +39,12 @@ public class LevelBehaviour : MonoBehaviour
     {
         InitTemplate();
         _roomGraph = new Graph<RoomDescription>(Template.Width, Template.Height);
+        _defaultPath = new List<Node<RoomDescription>>();
         GenerateShapes();
         PlaceStartExit();
         FindPath();
-        PlaceKeys();
+
+        KeyPositions = new Vector2[_template.KeyAmount];
         //Mark the nodes at the start an end positions so they can be displayed correctly.
         Node<RoomDescription> startNode = _roomGraph.GetNode(_startPosition);
         Node<RoomDescription> endNode = _roomGraph.GetNode(ExitPosition);
@@ -50,8 +53,8 @@ public class LevelBehaviour : MonoBehaviour
         PlayerPath = new List<Node<RoomDescription>>();
         PlayerPath.Add(startNode);
 
-
         _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
+        PlaceKeys();
     }
 
     /// <summary>
@@ -223,7 +226,7 @@ public class LevelBehaviour : MonoBehaviour
             //Return if the exit was found successfully.
             if (path[path.Count - 1].Position == _exitPosition)
             {
-                _defaultPath = path;
+                _defaultPath.AddRange(path);
                 return;
             }
             //Otherwise if the length of the path has exceeded the graphite limit...
@@ -262,6 +265,7 @@ public class LevelBehaviour : MonoBehaviour
             //Update the start position so previous nodes aren't evaluated again.
             currentStartPosition = lastNode.Position;
             nodesTravelled += path.Count;
+            _defaultPath.AddRange(path);
         }
     }
 
@@ -317,27 +321,47 @@ public class LevelBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Searches the graph for valid locations for keys and places them.
+    /// </summary>
+    /// <exception cref="Exception"></exception>
     private void PlaceKeys()
     {
+        if (_template.KeyAmount <= 0)
+            return;
+
         List<Node<RoomDescription>> spawnTargets = null;
 
         spawnTargets = _defaultPath.FindAll(room => Vector2.Distance(room.Position, _startPosition) >= _keyDistanceFromStart);
 
+        int sections = spawnTargets.Count / _template.KeyAmount;
+
+        if (spawnTargets.Count == 0)
+            throw new Exception("Could not find potential spawn locations for keys.");
+
+        Vector2 lastSpawnPosition = Vector2.zero;
+
         for (int i = 0; i < _template.KeyAmount; i++)
         {
-            int spawnIndex = Random.Range(0, spawnTargets.Count);
+
+            int spawnIndex = Random.Range((sections * i), (sections * (i + 1)));
 
             Node<RoomDescription> spawnTarget = spawnTargets[spawnIndex];
 
             Node<RoomDescription> spawnRoom = _roomGraph.FindNode(spawnTarget.Position, (node1, node2) =>
             {
+                if (node1.Data.inkColor == "Black")
+                    node1.Data.inkColor = "White";
+
                 return !_defaultPath.Contains(node1) && Vector2.Distance(node1.Position, _startPosition) >= _keyDistanceFromStart
-                && node1.Position != _exitPosition;
+                && node1.Position != _exitPosition && node1.Data.stickerType != "Key" && Vector2.Distance(lastSpawnPosition, node1.Position) >= _keyDistanceFromKey;
             });
 
+            spawnRoom.Data.inkColor = "White";
             spawnRoom.Data.stickerType = "Key";
 
             _keyPositions[i] = spawnRoom.Position;
+            lastSpawnPosition = spawnRoom.Position;
         }
     }
 

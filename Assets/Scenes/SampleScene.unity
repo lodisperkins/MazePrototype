@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af85e5caadf592541a17d7b6f8782d2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _keyDistanceFromStart: 2
+  _keyDistanceFromKey: 4
   _playerPath: []
 --- !u!4 &594497375
 Transform:

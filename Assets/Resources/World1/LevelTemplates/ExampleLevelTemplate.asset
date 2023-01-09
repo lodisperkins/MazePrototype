@@ -17,6 +17,7 @@ MonoBehaviour:
   _miniBossAmount: 0
   _treasureAmount: 0
   _trapAmount: 0
+  _keyAmount: 3
   _width: 8
   _height: 8
   _complexityScore: 0
