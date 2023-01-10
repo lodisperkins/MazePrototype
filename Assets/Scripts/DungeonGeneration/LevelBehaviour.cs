@@ -324,23 +324,25 @@ public class LevelBehaviour : MonoBehaviour
     /// <summary>
     /// Searches the graph for valid locations for keys and places them.
     /// </summary>
-    /// <exception cref="Exception"></exception>
+    /// <exception cref="Exception">Throws exception if there are no rooms that match the distance parameters.</exception>
     private void PlaceKeys()
     {
         if (_template.KeyAmount <= 0)
             return;
 
+        //Gets a list of rooms that keys can potentially spawn in.
         List<Node<RoomDescription>> spawnTargets = null;
-
         spawnTargets = _defaultPath.FindAll(room => Vector2.Distance(room.Position, _startPosition) >= _keyDistanceFromStart);
-
-        int sections = spawnTargets.Count / _template.KeyAmount;
 
         if (spawnTargets.Count == 0)
             throw new Exception("Could not find potential spawn locations for keys.");
 
+        ///Finds the amount of sections that the spawn target count can be divided in.
+        int sections = spawnTargets.Count / _template.KeyAmount;
+
         Vector2 lastSpawnPosition = Vector2.zero;
 
+        //Spawn all room keys.
         for (int i = 0; i < _template.KeyAmount; i++)
         {
 
