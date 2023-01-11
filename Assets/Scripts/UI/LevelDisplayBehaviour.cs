@@ -1,4 +1,5 @@
 using DungeonGeneration;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class LevelDisplayBehaviour : MonoBehaviour
     private static bool _drawActive;
     private List<RoomButtonBehaviour> _selectedButtonNeighbors;
     private List<RoomButtonBehaviour> _currentRemovableNodes;
+    private int _currentKeyCount;
 
     public static bool EraseActive 
     { 
@@ -169,8 +171,13 @@ public class LevelDisplayBehaviour : MonoBehaviour
             _roomButtons[x, y].OnAddedToPath?.Invoke();
             _roomButtons[x, y].AddedToPath = true;
 
+
+            if (Array.Exists(_level.KeyPositions, value => value == new Vector2(x,y)))
+                _currentKeyCount++;
+
+
             //If the exit was added to the path allow the player to load the dungeon.
-            if (_level.ExitPosition == new Vector2(x, y))
+            if (_level.PlayerPath.Find(node => node.Position == _level.ExitPosition) != null && _currentKeyCount == _level.Template.KeyAmount)
                 _loadDungeonButton.SetActive(true);
 
             added = true;
@@ -213,8 +220,11 @@ public class LevelDisplayBehaviour : MonoBehaviour
             bool startNodeHasPath = GetButtonNeighbors((int)_level.StartPosition.x, (int)_level.StartPosition.y).
                 FindAll(button => button.AddedToPath).Count > 0;
 
+            if (Array.Exists(_level.KeyPositions, value => value == new Vector2(x, y)))
+                _currentKeyCount--;
+
             //If there isn't a path to the exit or the start...
-            if (!exitNodeHasPath || !startNodeHasPath)
+            if (!exitNodeHasPath || !startNodeHasPath || _currentKeyCount != _level.Template.KeyAmount)
                 //...prevent the player from loading the dungeon.
                 _loadDungeonButton.SetActive(false);
 
@@ -420,7 +430,11 @@ public class LevelDisplayBehaviour : MonoBehaviour
         RoomButtonBehaviour button = _roomButtons[x, y];
 
         Node<RoomDescription> node = _level.RoomGraph.GetNode(x, y);
-        if (node.Data.stickerType == "Start")
+
+
+        if (button.MarkedForRemoval)
+            button.image.color = Color.red / 2;
+        else if (node.Data.stickerType == "Start")
         {
             button.image.color = Color.green;
             _level.AddNodeToPlayerPath(new Vector2(x, y), new Vector2(x, y));
@@ -435,8 +449,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
         else if (node.Data.stickerType == "Key")
             button.image.color = Color.blue;
-        else if (button.MarkedForRemoval)
-            button.image.color = Color.red / 2;
         else if (button.AddedToPath)
             button.image.color = Color.cyan;
         else
