@@ -434,20 +434,20 @@ public class LevelDisplayBehaviour : MonoBehaviour
 
         if (button.MarkedForRemoval)
             button.image.color = Color.red / 2;
-        else if (node.Data.stickerType == "Start")
+        else if (node.Data.StickerType == StickerType.START)
         {
             button.image.color = Color.green;
             _level.AddNodeToPlayerPath(new Vector2(x, y), new Vector2(x, y));
             button.AddedToPath = true;
         }
-        else if (node.Data.stickerType == "End")
+        else if (node.Data.StickerType == StickerType.EXIT)
             button.image.color = Color.yellow;
-        else if (node.Data.inkColor == "Black")
+        else if (node.Data.InkColor == InkColor.BLACK)
         {
             button.image.color = Color.black;
             button.enabled = false;
         }
-        else if (node.Data.stickerType == "Key")
+        else if (node.Data.StickerType == StickerType.KEY)
             button.image.color = Color.blue;
         else if (button.AddedToPath)
             button.image.color = Color.cyan;

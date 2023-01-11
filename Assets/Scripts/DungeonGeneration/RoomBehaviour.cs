@@ -11,31 +11,18 @@ using Random = UnityEngine.Random;
 
 namespace DungeonGeneration
 {
-    public struct Layer
+    public enum InkColor
     {
-        public string name { get; set; }
-        public string _eid { get; set; }
-        public int offsetX { get; set; }
-        public int offsetY { get; set; }
-        public int gridCellWidth { get; set; }
-        public int gridCellHeight { get; set; }
-        public int gridCellsX { get; set; }
-        public int gridCellsY { get; set; }
-        public string tileset { get; set; }
-        public int[,] data2D { get; set; }
-        public int exportMode { get; set; }
-        public int arrayMode { get; set; }
+        NONE,
+        BLACK
     }
-
-    public struct RoomData
+    
+    public enum StickerType
     {
-        public string ogmoVersion { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-        public int offsetX { get; set; }
-        public int offsetY { get; set; }
-        public RoomDescription Description { get; set; }
-        public Layer[] layers { get; set; }
+        NONE,
+        START,
+        KEY,
+        EXIT
     }
 
     public struct RoomDescription
@@ -46,8 +33,8 @@ namespace DungeonGeneration
         private bool _hasWestExit;
         private int _exitCount;
          
-        public string inkColor { get; set; }
-        public string stickerType { get; set; }
+        public InkColor InkColor { get; set; }
+        public StickerType StickerType { get; set; }
         public bool HasNorthExit 
         {
             get => _hasNorthExit;
@@ -200,7 +187,9 @@ namespace DungeonGeneration
                             _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                 description => description.Floor == FloorType.WALL);
                             break;
-
+                        case TileID.KEY:
+                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
+                                description => description.);
                         default:
                             throw new ArgumentOutOfRangeException("There is no enumerator value that matches the tile ID loaded. Tile ID was " + (TileID)_data.layers[0].data2D[y, x]);
                     }
@@ -280,5 +269,32 @@ namespace DungeonGeneration
             }
 
         }
+    }
+
+    public struct Layer
+    {
+        public string name { get; set; }
+        public string _eid { get; set; }
+        public int offsetX { get; set; }
+        public int offsetY { get; set; }
+        public int gridCellWidth { get; set; }
+        public int gridCellHeight { get; set; }
+        public int gridCellsX { get; set; }
+        public int gridCellsY { get; set; }
+        public string tileset { get; set; }
+        public int[,] data2D { get; set; }
+        public int exportMode { get; set; }
+        public int arrayMode { get; set; }
+    }
+
+    public struct RoomData
+    {
+        public string ogmoVersion { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+        public int offsetX { get; set; }
+        public int offsetY { get; set; }
+        public RoomDescription Description { get; set; }
+        public Layer[] layers { get; set; }
     }
 }

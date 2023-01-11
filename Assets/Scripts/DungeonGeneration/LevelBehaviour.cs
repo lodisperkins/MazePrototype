@@ -48,12 +48,12 @@ public class LevelBehaviour : MonoBehaviour
         //Mark the nodes at the start an end positions so they can be displayed correctly.
         Node<RoomDescription> startNode = _roomGraph.GetNode(_startPosition);
         Node<RoomDescription> endNode = _roomGraph.GetNode(ExitPosition);
-        startNode.Data.stickerType = "Start";
+        startNode.Data.StickerType = StickerType.START;
 
         PlayerPath = new List<Node<RoomDescription>>();
         PlayerPath.Add(startNode);
 
-        _roomGraph.GetNode(_exitPosition).Data.stickerType = "End";
+        _roomGraph.GetNode(_exitPosition).Data.StickerType = StickerType.EXIT;
         PlaceKeys();
     }
 
@@ -202,7 +202,7 @@ public class LevelBehaviour : MonoBehaviour
             return true;
         if (nextNode.Position.y - currentNode.Position.y < 0 && _travelDirection == Vector2.up)
             return true;
-        if (nextNode.Data.inkColor == "Black")
+        if (nextNode.Data.InkColor == InkColor.BLACK)
             return true;
 
         return false;
@@ -241,7 +241,7 @@ public class LevelBehaviour : MonoBehaviour
             //This section removes the inkblots that are blocking the path.
 
             Node<RoomDescription> lastNode = path[path.Count - 1];
-            List<Edge<RoomDescription>> obstacleEdges = lastNode.Edges.FindAll(edge => edge.Target.Data.inkColor == "Black");
+            List<Edge<RoomDescription>> obstacleEdges = lastNode.Edges.FindAll(edge => edge.Target.Data.InkColor == InkColor.BLACK);
             Node<RoomDescription> obstacleNode = null;
 
             //Throws an error if the path couldn't be found even without being blocked by obstacles.
@@ -260,7 +260,7 @@ public class LevelBehaviour : MonoBehaviour
             }
 
             if (obstacleNode != null)
-                obstacleNode.Data.inkColor = "White";
+                obstacleNode.Data.InkColor = InkColor.NONE;
 
             //Update the start position so previous nodes aren't evaluated again.
             currentStartPosition = lastNode.Position;
@@ -296,7 +296,7 @@ public class LevelBehaviour : MonoBehaviour
             for (int x = 0; x < Width; x++)
             {
                 if (shape.layers[0].data2D[x, y] != -1)
-                    RoomGraph.GetNode(x, y).Data.inkColor = "Black";
+                    RoomGraph.GetNode(x, y).Data.InkColor = InkColor.BLACK;
             }
         }
     }
@@ -311,9 +311,9 @@ public class LevelBehaviour : MonoBehaviour
         {
             for (int x = 0; x < Width; x++)
             {
-                if (RoomGraph.GetNode(x, y).Data.inkColor != "Black" && _startPosition == new Vector2(-1, -1))
+                if (RoomGraph.GetNode(x, y).Data.InkColor != InkColor.BLACK && _startPosition == new Vector2(-1, -1))
                     _startPosition = new Vector2(x, y);
-                else if (RoomGraph.GetNode(Width - (1 + x), Height - (1 + y)).Data.inkColor != "Black" && _exitPosition == new Vector2(-1, -1))
+                else if (RoomGraph.GetNode(Width - (1 + x), Height - (1 + y)).Data.InkColor != InkColor.BLACK && _exitPosition == new Vector2(-1, -1))
                     _exitPosition = new Vector2(Width - (1 + x), Height - (1 + y));
                 else if (_startPosition != new Vector2(-1, -1) && _exitPosition != new Vector2(-1, -1))
                     return;
@@ -352,15 +352,15 @@ public class LevelBehaviour : MonoBehaviour
 
             Node<RoomDescription> spawnRoom = _roomGraph.FindNode(spawnTarget.Position, (node1, node2) =>
             {
-                if (node1.Data.inkColor == "Black")
-                    node1.Data.inkColor = "White";
+                if (node1.Data.InkColor == InkColor.BLACK)
+                    node1.Data.InkColor = InkColor.NONE;
 
                 return !_defaultPath.Contains(node1) && Vector2.Distance(node1.Position, _startPosition) >= _keyDistanceFromStart
-                && node1.Position != _exitPosition && node1.Data.stickerType != "Key" && Vector2.Distance(lastSpawnPosition, node1.Position) >= _keyDistanceFromKey;
+                && node1.Position != _exitPosition && node1.Data.StickerType != StickerType.KEY && Vector2.Distance(lastSpawnPosition, node1.Position) >= _keyDistanceFromKey;
             });
 
-            spawnRoom.Data.inkColor = "White";
-            spawnRoom.Data.stickerType = "Key";
+            spawnRoom.Data.InkColor = InkColor.NONE;
+            spawnRoom.Data.StickerType = StickerType.KEY;
 
             _keyPositions[i] = spawnRoom.Position;
             lastSpawnPosition = spawnRoom.Position;

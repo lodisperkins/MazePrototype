@@ -12,17 +12,17 @@
   "levelMaxSize": {"x": 192, "y": 112},
   "levelValues": [
     {
-      "name": "inkColor",
+      "name": "InkColor",
       "definition": "Enum",
       "display": 0,
       "choices": ["None", "Black", "Brown", "Green", "Blue", "Cyan"],
       "defaults": 0
     },
     {
-      "name": "stickerType",
+      "name": "StickerType",
       "definition": "Enum",
       "display": 0,
-      "choices": ["None", "Key", "Treasure", "Fountain", "Shop", "Trap", "Gauntlet", "Miniboss"],
+      "choices": ["None", "Start", "Key", "Treasure", "Fountain", "Shop", "Trap", "Gauntlet", "Miniboss", "Exit"],
       "defaults": 0
     },
     {"name": "hasNorthExit", "definition": "Boolean", "display": 0, "defaults": true},
@@ -38,15 +38,60 @@
   "layers": [
     {
       "definition": "tile",
-      "name": "tileLayout",
+      "name": "Tiles",
       "gridSize": {"x": 16, "y": 16},
       "exportID": "03915452",
       "exportMode": 0,
       "arrayMode": 1,
       "defaultTileset": "roomFloor"
+    },
+    {
+      "definition": "entity",
+      "name": "Entities",
+      "gridSize": {"x": 16, "y": 16},
+      "exportID": "47386941",
+      "requiredTags": [],
+      "excludedTags": []
     }
   ],
-  "entities": [],
+  "entities": [
+    {
+      "exportID": "47395470",
+      "name": "Key",
+      "limit": -1,
+      "size": {"x": 16, "y": 16},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#ff0000ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 16, "y": 16},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    }
+  ],
   "tilesets": [
     {
       "label": "roomFloor",

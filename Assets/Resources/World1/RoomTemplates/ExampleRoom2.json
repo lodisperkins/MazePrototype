@@ -4,10 +4,10 @@
   "height": 112,
   "offsetX": 0,
   "offsetY": 0,
-  "values": {"inkColor": "None", "stickerType": "None", "hasNorthExit": true, "hasSouthExit": true, "hasEastExit": true, "hasWestExit": true},
+  "values": {"InkColor": "None", "StickerType": "None", "hasNorthExit": true, "hasSouthExit": true, "hasEastExit": true, "hasWestExit": true},
   "layers": [
     {
-      "name": "tileLayout",
+      "name": "Tiles",
       "_eid": "03915452",
       "offsetX": 0,
       "offsetY": 0,
@@ -27,6 +27,17 @@
       ],
       "exportMode": 0,
       "arrayMode": 1
+    },
+    {
+      "name": "Entities",
+      "_eid": "47386941",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 16,
+      "gridCellHeight": 16,
+      "gridCellsX": 12,
+      "gridCellsY": 7,
+      "entities": []
     }
   ]
 }

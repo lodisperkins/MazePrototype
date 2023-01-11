@@ -28,7 +28,8 @@ namespace DungeonGeneration
         VOID = 509,
         WALL = 482,
         POSSIBLEWALL = 3237,
-        DOOR = 197
+        DOOR = 197,
+        KEY = 744
     }
 
     /// <summary>
