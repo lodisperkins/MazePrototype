@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: KeyTile
   m_EditorClassIdentifier: 
   Floor: 5
-  Visual: {fileID: 0}
+  Visual: {fileID: 1328080937888972822, guid: a790aebb9c36a84419140fa7c049f1d6, type: 3}
