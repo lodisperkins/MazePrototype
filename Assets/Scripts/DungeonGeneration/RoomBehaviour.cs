@@ -110,6 +110,7 @@ namespace DungeonGeneration
     public class RoomBehaviour : MonoBehaviour
     {
         private TileDescription[] _tileDescriptionReferences;
+        private EntityDescription[] _entityDescriptionReferences;
         private TileDescription[,] _tileDescriptions;
         private RoomData _data;
         private int _world;
@@ -187,14 +188,28 @@ namespace DungeonGeneration
                             _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
                                 description => description.Floor == FloorType.WALL);
                             break;
-                        case TileID.KEY:
-                            _tileDescriptions[y, x] = Array.Find(_tileDescriptionReferences,
-                                description => description.);
                         default:
                             throw new ArgumentOutOfRangeException("There is no enumerator value that matches the tile ID loaded. Tile ID was " + (TileID)_data.layers[0].data2D[y, x]);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Instantiates each entity based on the entities in the room template.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the ID of the tile hasn't been defined.</exception>
+        private void SpawnEntity(Vector2 tilePosition, Vector3 position)
+        {
+            Entity entityData = _data.layers[1].entities.FirstOrDefault(e => new Vector2(e.x, e.y) == tilePosition);
+
+            if (entityData.Equals(default(Entity)))
+                return;
+
+            GameObject entityVisual = _entityDescriptionReferences.First(e => e.Entity == (EntityType)entityData.id).Visual;
+
+            GameObject entity = Instantiate(entityVisual, gameObject.transform);
+            entity.transform.position = position;   
         }
         
         /// <summary>
@@ -226,6 +241,8 @@ namespace DungeonGeneration
         private void LoadRoomData(RoomDescription description)
         {
             _tileDescriptionReferences = Resources.LoadAll<TileDescription>("World" + World + "/TileDescriptions");
+            _entityDescriptionReferences = Resources.LoadAll<EntityDescription>("World" + World + "/EntityDescriptions");
+
             string[] files = Directory.GetFiles("Assets/Resources/World" + World + "/RoomTemplates", "*.json");
 
             int roomNum = Random.Range(0, files.Length);
@@ -260,8 +277,9 @@ namespace DungeonGeneration
                     {
                         GameObject tile = Instantiate(visual, gameObject.transform);
                         tile.transform.position = _spawnPosition;
-                    }
 
+                        SpawnEntity(new Vector2(x, y), tile.transform.position);
+                    }
                     _spawnPosition.x++;
                 }
 
@@ -285,6 +303,18 @@ namespace DungeonGeneration
         public int[,] data2D { get; set; }
         public int exportMode { get; set; }
         public int arrayMode { get; set; }
+        public Entity[] entities { get; set; }
+    }
+
+    public struct Entity
+    {
+        public string name { get; set; }
+        public int id { get; set; }
+        public string _eid { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+        public int originX { get; set; }
+        public int originY { get; set; }
     }
 
     public struct RoomData

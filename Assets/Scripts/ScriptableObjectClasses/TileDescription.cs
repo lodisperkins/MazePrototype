@@ -14,14 +14,6 @@ namespace DungeonGeneration
         TREASURE
     }
 
-    public enum EntityType
-    {
-        EMPTY,
-        KEY,
-        MERCHANT,
-        MONSTER
-    }
-
     public enum TileID
     {
         FLOOR = -1,
@@ -29,7 +21,6 @@ namespace DungeonGeneration
         WALL = 482,
         POSSIBLEWALL = 3237,
         DOOR = 197,
-        KEY = 744
     }
 
     /// <summary>

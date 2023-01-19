@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6513b8cf220b08246a43f15c36729365, type: 3}
-  m_Name: KeyTile
+  m_Script: {fileID: 11500000, guid: e3eb384086e3d6449b5d0d017476084e, type: 3}
+  m_Name: Key
   m_EditorClassIdentifier: 
-  Floor: 5
+  Entity: 1
   Visual: {fileID: 1328080937888972822, guid: a790aebb9c36a84419140fa7c049f1d6, type: 3}
