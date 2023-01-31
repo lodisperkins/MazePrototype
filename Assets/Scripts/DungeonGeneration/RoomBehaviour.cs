@@ -199,9 +199,9 @@ namespace DungeonGeneration
         /// Instantiates each entity based on the entities in the room template.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the ID of the tile hasn't been defined.</exception>
-        private void SpawnEntity(Vector2 tilePosition, Vector3 position)
+        private void SpawnEntity(Vector2 gridPosition, Vector3 position)
         {
-            Entity entityData = _data.layers[1].entities.FirstOrDefault(e => new Vector2(e.x, e.y) == tilePosition);
+            Entity entityData = _data.layers[1].entities.FirstOrDefault(e => new Vector2(e.x, e.y) == gridPosition);
 
             if (entityData.Equals(default(Entity)))
                 return;
@@ -243,7 +243,14 @@ namespace DungeonGeneration
             _tileDescriptionReferences = Resources.LoadAll<TileDescription>("World" + World + "/TileDescriptions");
             _entityDescriptionReferences = Resources.LoadAll<EntityDescription>("World" + World + "/EntityDescriptions");
 
-            string[] files = Directory.GetFiles("Assets/Resources/World" + World + "/RoomTemplates", "*.json");
+            string sticker = "";
+
+            if (description.StickerType == StickerType.START || description.StickerType == StickerType.EXIT)
+                sticker = "NONE";
+            else
+                sticker = description.StickerType.ToString();
+
+            string[] files = Directory.GetFiles("Assets/Resources/World" + World + "/RoomTemplates", "*" + sticker + ".json");
 
             int roomNum = Random.Range(0, files.Length);
 
@@ -278,7 +285,7 @@ namespace DungeonGeneration
                         GameObject tile = Instantiate(visual, gameObject.transform);
                         tile.transform.position = _spawnPosition;
 
-                        SpawnEntity(new Vector2(x, y), tile.transform.position);
+                        SpawnEntity(new Vector2(x * _data.layers[0].gridCellWidth, y * _data.layers[0].gridCellHeight), tile.transform.position);
                     }
                     _spawnPosition.x++;
                 }

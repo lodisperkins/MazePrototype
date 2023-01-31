@@ -74,8 +74,8 @@
         ]
       },
       "color": "#ff0000ff",
-      "tileX": false,
-      "tileY": false,
+      "tileX": true,
+      "tileY": true,
       "tileSize": {"x": 16, "y": 16},
       "resizeableX": false,
       "resizeableY": false,
