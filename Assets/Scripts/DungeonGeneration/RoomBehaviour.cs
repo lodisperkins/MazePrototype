@@ -206,7 +206,7 @@ namespace DungeonGeneration
             if (entityData.Equals(default(Entity)))
                 return;
 
-            GameObject entityVisual = _entityDescriptionReferences.First(e => e.Entity == (EntityType)entityData.id).Visual;
+            GameObject entityVisual = _entityDescriptionReferences.First(e => e.Entity.ToString() == entityData.name.ToUpper()).Visual;
 
             GameObject entity = Instantiate(entityVisual, gameObject.transform);
             entity.transform.position = position;   
@@ -245,7 +245,7 @@ namespace DungeonGeneration
 
             string sticker = "";
 
-            if (description.StickerType == StickerType.START || description.StickerType == StickerType.EXIT)
+            if (description.StickerType == StickerType.START)
                 sticker = "NONE";
             else
                 sticker = description.StickerType.ToString();

@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 218270650502694900}
   - component: {fileID: 3752396961876625982}
   m_Layer: 0
-  m_Name: Key
-  m_TagString: Key
+  m_Name: ExitDoor
+  m_TagString: Exit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 22e24df281680dd44ae29a5ec27de3fd, type: 2}
+  - {fileID: 2100000, guid: 5c35820615454f44090a463e6ad00024, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

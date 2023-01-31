@@ -8,6 +8,7 @@ namespace DungeonGeneration
     public enum EntityType
     {
         KEY,
+        EXIT,
         MERCHANT,
         MONSTER,
         EMPTY

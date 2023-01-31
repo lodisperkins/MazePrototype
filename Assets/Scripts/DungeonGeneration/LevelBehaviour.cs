@@ -25,6 +25,7 @@ public class LevelBehaviour : MonoBehaviour
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
     private List<Node<RoomDescription>> _defaultPath;
 
+    private static int _currentKeyRequirement;
     public int Width { get => Template.Width; }
     public int Height { get => Template.Height; }
     public Graph<RoomDescription> RoomGraph { get => _roomGraph; }
@@ -34,6 +35,7 @@ public class LevelBehaviour : MonoBehaviour
     public LevelTemplate Template { get => _template; private set => _template = value; }
     public Vector3 PlayerSpawnPosition { get => _playerSpawnPosition; private set => _playerSpawnPosition = value; }
     public Vector2[] KeyPositions { get => _keyPositions; private set => _keyPositions = value; }
+    public static int CurrentKeyRequirement { get => _currentKeyRequirement; set => _currentKeyRequirement = value; }
 
     private void Awake()
     {
@@ -45,6 +47,8 @@ public class LevelBehaviour : MonoBehaviour
         FindPath();
 
         KeyPositions = new Vector2[_template.KeyAmount];
+        _currentKeyRequirement = _template.KeyAmount;
+
         //Mark the nodes at the start an end positions so they can be displayed correctly.
         Node<RoomDescription> startNode = _roomGraph.GetNode(_startPosition);
         Node<RoomDescription> endNode = _roomGraph.GetNode(ExitPosition);

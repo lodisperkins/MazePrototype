@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3eb384086e3d6449b5d0d017476084e, type: 3}
-  m_Name: Key
+  m_Name: ExitDoor
   m_EditorClassIdentifier: 
-  Entity: 0
-  Visual: {fileID: 1328080937888972822, guid: a790aebb9c36a84419140fa7c049f1d6, type: 3}
+  Entity: 1
+  Visual: {fileID: 1328080937888972822, guid: 418e4ab8fcf097f44b593a05066ac09b, type: 3}
