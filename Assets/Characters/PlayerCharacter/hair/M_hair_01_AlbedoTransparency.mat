@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: proto_character_hair_mat
+  m_Name: M_hair_01_AlbedoTransparency
   m_Shader: {fileID: -6465566751694194690, guid: d720fc1a1f2ffc14a82c047cebdbb51a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_d2ee905f28e7441d80f5066f45cbff34:
-        m_Texture: {fileID: 2800000, guid: b82b3f123a19d62439f9e9fec0424d7d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 067645f2d366faf4baac678322962ba7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
