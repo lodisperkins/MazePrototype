@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_hair_01_AlbedoTransparency
+  m_Name: M_hair_01
   m_Shader: {fileID: -6465566751694194690, guid: d720fc1a1f2ffc14a82c047cebdbb51a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
