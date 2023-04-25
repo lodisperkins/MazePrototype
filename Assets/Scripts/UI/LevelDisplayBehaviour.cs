@@ -303,11 +303,6 @@ public class LevelDisplayBehaviour : MonoBehaviour
             }
         }
 
-        if (_currentRemovableNodes.Count > 0)
-        {
-            _eventSystem.SetSelectedGameObject(_currentRemovableNodes[_currentRemovableNodes.Count - 1].gameObject);
-        }
-
         UpdateAllColors();
     }
 
@@ -427,12 +422,27 @@ public class LevelDisplayBehaviour : MonoBehaviour
     /// </summary>
     public bool CheckSelectedInPlayerPath()
     {
-        RoomButtonBehaviour button = _eventSystem.currentSelectedGameObject.GetComponent<RoomButtonBehaviour>();
+        RoomButtonBehaviour button = _eventSystem.currentSelectedGameObject?.GetComponent<RoomButtonBehaviour>();
 
         if (!button)
             return false;
 
         bool positionInPath = _level.PlayerPath.Find(item => item.Position == button.Position) != null;
+
+        return  positionInPath;
+    }
+
+    /// <summary>
+    /// Checks if the gameobject that is currently selected by the UI event system is a room that is in the players path.
+    /// </summary>
+    public bool CheckSelectedInRemovableNodes()
+    {
+        RoomButtonBehaviour button = _eventSystem.currentSelectedGameObject?.GetComponent<RoomButtonBehaviour>();
+
+        if (!button)
+            return false;
+
+        bool positionInPath = _currentRemovableNodes.Find(item => item.Position == button.Position) != null;
 
         return  positionInPath;
     }
@@ -483,6 +493,14 @@ public class LevelDisplayBehaviour : MonoBehaviour
         {
             EraseActive = true;
             MarkNodesForRemoval();
+
+            //If the player cursor isn't on a valid erase position...
+            if (_currentRemovableNodes.Count > 0 && !CheckSelectedInRemovableNodes())
+            {
+                //...snap the cursor to a valid erase position for convenience.
+                Vector2 pos = _currentRemovableNodes[_currentRemovableNodes.Count - 1].Position;
+                _eventSystem.SetSelectedGameObject(_roomButtons[(int)pos.x, (int)pos.y].gameObject);
+            }
         }
         else if ((EraseActive && Input.GetButtonUp("Cancel")) || _drawActive)
         {
@@ -490,12 +508,15 @@ public class LevelDisplayBehaviour : MonoBehaviour
             UnmarkNodesForRemoval();
         }
 
+        //Toggle draw mode if it's not active already.
         if (Input.GetButton("Submit") && !_drawActive)
         {
             _drawActive = true;
 
+            //If the player cursor isn't on a valid drawing position...
             if (_level.PlayerPath.Count > 0 && !CheckSelectedInPlayerPath())
             {
+                //...snap the cursor to a valid position.
                 Vector2 pos = _level.PlayerPath[_level.PlayerPath.Count - 1].Position;
                 _selectedButton = _roomButtons[(int)pos.x, (int)pos.y];
                 _selectedButton.OnButtonSelect();
