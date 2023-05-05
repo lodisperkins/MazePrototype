@@ -1,18 +1,23 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability : MonoBehaviour
+namespace Combat
 {
-    // Start is called before the first frame update
-    void Start()
+    public enum AbilityPhase
     {
-        
+        STARTUP,
+        ACTIVE,
+        RECOVER
     }
 
-    // Update is called once per frame
-    void Update()
+    [System.Serializable]
+    public abstract class Ability
     {
-        
+        private bool _inUse;
+        private bool _canPlayAnimation;
+        private List<HitColliderData> _colliderInfo;
+
     }
 }

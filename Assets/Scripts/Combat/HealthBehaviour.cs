@@ -89,6 +89,23 @@ namespace Combat
         }
 
         /// <summary>
+        /// Subtracts from the main health value and calls the OnDamageTaken event.
+        /// </summary>
+        /// <param name="damage">The amount to subtract from this objects health.</param>
+        /// <returns>The amount of damage done to the object.</returns>
+        public float TakeDamage(HitColliderData info)
+        {
+            float damageTaken = Health;
+
+            Health -= info.Damage;
+
+            damageTaken -= Health;
+
+            _onDamageTaken?.Invoke();
+            return damageTaken;
+        }
+
+        /// <summary>
         /// Resets the health to it's starting point.
         /// Will set it to the maximum health if the starting health is negative.
         /// </summary>
