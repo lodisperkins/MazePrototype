@@ -83,10 +83,70 @@ namespace Combat
 
         private void OnTriggerEnter(Collider other)
         {
+            //If the object that this collider is attached to is the owner...
             if (other.gameObject == Owner)
+                //...return to prevent collision.
                 return;
 
+            GameObject otherGameObject = null;
 
+            //If there is a rigidy body in the object's hierarchy...
+            if (!other.attachedRigidbody)
+                //...store its game object.
+                otherGameObject = other.attachedRigidbody.gameObject;
+            //If there isn't a rigid body attached in the hierarchy...
+            else
+                //...store the game object of the collider.
+                otherGameObject = other.gameObject;
+
+            ColliderBehaviour otherCollider = otherGameObject.GetComponent<ColliderBehaviour>();
+
+            //Check if collision between this collider and the other is possible.
+
+            if (otherCollider?.Owner == Owner)
+                return;
+
+            if (!CheckIfCollisionAllowed(otherGameObject.layer) || otherCollider.CheckIfCollisionAllowed(gameObject.layer))
+                return;
+
+            //Raise the event for collision and pass collision data.
+            Vector3 collisionDirection = (otherGameObject.transform.position - transform.position).normalized;
+            _onHit?.Invoke(otherGameObject, otherCollider, collisionDirection);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            GameObject other = collision.gameObject;
+
+            //If the object that this collider is attached to is the owner...
+            if (other.gameObject == Owner)
+                //...return to prevent collision.
+                return;
+
+            GameObject otherGameObject = null;
+
+            //If there is a rigidy body in the object's hierarchy...
+            if (!collision.collider.attachedRigidbody)
+                //...store its game object.
+                otherGameObject = collision.collider.attachedRigidbody.gameObject;
+            //If there isn't a rigid body attached in the hierarchy...
+            else
+                //...store the game object of the collider.
+                otherGameObject = other;
+
+            ColliderBehaviour otherCollider = otherGameObject.GetComponent<ColliderBehaviour>();
+
+            //Check if collision between this collider and the other is possible.
+
+            if (otherCollider?.Owner == Owner)
+                return;
+
+            if (!CheckIfCollisionAllowed(otherGameObject.layer) || otherCollider.CheckIfCollisionAllowed(gameObject.layer))
+                return;
+
+            //Raise the event for collision and pass collision data.
+            Vector3 collisionDirection = (otherGameObject.transform.position - transform.position).normalized;
+            _onHit?.Invoke(otherGameObject, otherCollider, collisionDirection);
         }
     }
 }
