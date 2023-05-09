@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class LevelBehaviour : MonoBehaviour
 {
     private Graph<RoomDescription> _roomGraph;
-    private LevelTemplate _template;
+    private LevelTemplate_SO _template;
 
     private Vector2 _startPosition = new Vector2( -1, -1 );
     private Vector3 _playerSpawnPosition;
@@ -32,7 +32,7 @@ public class LevelBehaviour : MonoBehaviour
     public List<Node<RoomDescription>> PlayerPath { get => _playerPath; private set => _playerPath = value; }
     public Vector2 StartPosition { get => _startPosition; }
     public Vector2 ExitPosition { get => _exitPosition; }
-    public LevelTemplate Template { get => _template; private set => _template = value; }
+    public LevelTemplate_SO Template { get => _template; private set => _template = value; }
     public Vector3 PlayerSpawnPosition { get => _playerSpawnPosition; private set => _playerSpawnPosition = value; }
     public Vector2[] KeyPositions { get => _keyPositions; private set => _keyPositions = value; }
     public static int CurrentKeyRequirement { get => _currentKeyRequirement; set => _currentKeyRequirement = value; }
@@ -66,7 +66,7 @@ public class LevelBehaviour : MonoBehaviour
     /// </summary>
     private void InitTemplate()
     {
-        LevelTemplate[] templates = Resources.LoadAll<LevelTemplate>("World1/LevelTemplates");
+        LevelTemplate_SO[] templates = Resources.LoadAll<LevelTemplate_SO>("World1/LevelTemplates");
 
         Template = templates[UnityEngine.Random.Range(0, templates.Length)];
     }

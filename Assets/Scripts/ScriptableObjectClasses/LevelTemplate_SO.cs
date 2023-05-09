@@ -8,7 +8,7 @@ namespace DungeonGeneration
     /// Object containing data for level generation.
     /// </summary>
     [CreateAssetMenu(menuName = "LevelGeneration/LevelTemplate")]
-    public class LevelTemplate : ScriptableObject
+    public class LevelTemplate_SO : ScriptableObject
     {
         [SerializeField]
         private int _world;

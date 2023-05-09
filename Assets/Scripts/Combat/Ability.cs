@@ -1,4 +1,5 @@
 
+using DelayedActions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,11 @@ namespace Combat
         private bool _inUse;
         private bool _canPlayAnimation;
         private List<HitColliderData> _colliderInfo;
+        private TimedAction _currentTimer;
+        private HealthBehaviour _ownerHealth;
+
+        private GameObject _owner;
+
 
     }
 }

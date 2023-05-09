@@ -18,7 +18,7 @@ namespace DungeonGeneration
     /// Object containing data for tile generation.
     /// </summary>
     [CreateAssetMenu(menuName = "LevelGeneration/EntityDescription")]
-    public class EntityDescription : ScriptableObject
+    public class EntityDescription_SO : ScriptableObject
     {
         public EntityType Entity;
         public GameObject Visual;

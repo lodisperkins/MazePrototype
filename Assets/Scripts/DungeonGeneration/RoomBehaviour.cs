@@ -109,9 +109,9 @@ namespace DungeonGeneration
     
     public class RoomBehaviour : MonoBehaviour
     {
-        private TileDescription[] _tileDescriptionReferences;
-        private EntityDescription[] _entityDescriptionReferences;
-        private TileDescription[,] _tileDescriptions;
+        private TileDescription_SO[] _tileDescriptionReferences;
+        private EntityDescription_SO[] _entityDescriptionReferences;
+        private TileDescription_SO[,] _tileDescriptions;
         private RoomData _data;
         private int _world;
         private Vector3 _spawnPosition;
@@ -240,8 +240,8 @@ namespace DungeonGeneration
         /// <param name="description"></param>
         private void LoadRoomData(RoomDescription description)
         {
-            _tileDescriptionReferences = Resources.LoadAll<TileDescription>("World" + World + "/TileDescriptions");
-            _entityDescriptionReferences = Resources.LoadAll<EntityDescription>("World" + World + "/EntityDescriptions");
+            _tileDescriptionReferences = Resources.LoadAll<TileDescription_SO>("World" + World + "/TileDescriptions");
+            _entityDescriptionReferences = Resources.LoadAll<EntityDescription_SO>("World" + World + "/EntityDescriptions");
 
             string sticker = "";
 
@@ -260,7 +260,7 @@ namespace DungeonGeneration
             _data = JsonConvert.DeserializeObject<RoomData>(dat);
             _data.Description = description;
 
-            _tileDescriptions = new TileDescription[_data.layers[0].data2D.GetLength(0), _data.layers[0].data2D.GetLength(1)];
+            _tileDescriptions = new TileDescription_SO[_data.layers[0].data2D.GetLength(0), _data.layers[0].data2D.GetLength(1)];
             InitializeTiles();
         }
 
