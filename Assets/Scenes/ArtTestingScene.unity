@@ -490,9 +490,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5632791527531388904, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3959647450566367206, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3786762798161993416, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
       propertyPath: m_Name
       value: SK_EnemyGoblin
+      objectReference: {fileID: 0}
+    - target: {fileID: 3051919721090625905, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264411590948719054, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6046267873284253716, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1f3411aac6573743a8cbcb5aa1fa62c, type: 3}
