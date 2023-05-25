@@ -8,8 +8,8 @@ using UnityEngine;
 public enum AnimationType
 {
     CAST,
-    SUMMON,
-    MELEE,
+    SWING,
+    DEFEND,
     CUSTOM
 }
 
@@ -41,7 +41,7 @@ public class AbilityData_SO : ScriptableObject
     [Tooltip("How long the object that used the ability must wait before the ability activates.")]
     public float StartUpTime;
     [Tooltip("How long the ability should be active for.")]
-    public float TimeActive = 0;
+    public float ActiveTime = 0;
     [Tooltip("How long the object that used the ability needs before returning to idle.")]
     public float RecoverTime;
 

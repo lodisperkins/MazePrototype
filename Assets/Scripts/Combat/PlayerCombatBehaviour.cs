@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Combat
 {
@@ -14,6 +15,15 @@ namespace Combat
 
         private Ability _ability1;
         private Ability _ability2;
+        private UnityEvent _onUseAbility;
+
+        public bool AbilityInUse
+        {
+            get
+            {
+                return _ability1.InUse || _ability2.InUse;
+            }
+        }
 
         // Start is called before the first frame update
         void Awake()
@@ -31,6 +41,27 @@ namespace Combat
 
             _ability1 = (Ability)Activator.CreateInstance(ability1Type);
             _ability2 = (Ability)Activator.CreateInstance(ability2Type);
+        }
+
+        public Ability GetActiveAbility()
+        {
+            if (!AbilityInUse)
+                return null;
+
+            if (_ability1.InUse)
+                return _ability1;
+
+            return _ability2;
+        }
+
+        public void AddOnUseAbilityAction(UnityAction action)
+        {
+            _onUseAbility.AddListener(action);
+        }
+
+        public void RemoveOnUseAbilityAction(UnityAction action)
+        {
+            _onUseAbility.RemoveListener(action);
         }
 
         public void UseAbility1(params object[] args)

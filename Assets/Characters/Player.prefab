@@ -247,9 +247,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5283345354910244710, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
       propertyPath: m_Name
       value: SK_PlayerCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1056626177808555898, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3143249821721305872, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6d7297d94873974fbbb7e6f3d82cd33, type: 3}

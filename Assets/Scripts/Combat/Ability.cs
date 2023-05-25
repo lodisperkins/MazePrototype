@@ -44,6 +44,7 @@ namespace Combat
         public HealthBehaviour OwnerHealth { get => _ownerHealth; private set => _ownerHealth = value; }
         public GameObject Owner { get => _owner; private set => _owner = value; }
         public AbilityPhase CurrentPhase { get => _currentPhase; private set => _currentPhase = value; }
+        public AbilityData_SO AbilityData { get => _abilityData; private set => _abilityData = value; }
 
         public void AddOnStartAction(UnityAction action)
         {
@@ -78,12 +79,12 @@ namespace Combat
         public void Init(GameObject owner, AbilityData_SO data)
         {
             Owner = owner;
-            _abilityData = data;
+            AbilityData = data;
             OwnerHealth = owner.GetComponent<HealthBehaviour>();
 
-            for (int i = 0; i < _abilityData.ColliderInfoCount; i++)
+            for (int i = 0; i < AbilityData.ColliderInfoCount; i++)
             {
-                HitColliderData info = _abilityData.GetCollliderInfo(i);
+                HitColliderData info = AbilityData.GetCollliderInfo(i);
                 _colliderInfo.Add(info);
             }
 
@@ -95,7 +96,7 @@ namespace Combat
             CurrentPhase = AbilityPhase.STARTUP;
             _onStart?.Invoke();
 
-            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(ActivePhase, TimeUnit.SCALEDTIME, _abilityData.StartUpTime, args);
+            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(ActivePhase, TimeUnit.SCALEDTIME, AbilityData.StartUpTime, args);
 
             for (int i = 0; i < _colliderInfo.Count; i++)
             {
@@ -115,7 +116,7 @@ namespace Combat
             _onActivate?.Invoke();
             OnActivate(args);
 
-            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(RecoverPhase, TimeUnit.SCALEDTIME, _abilityData.StartUpTime, args);
+            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(RecoverPhase, TimeUnit.SCALEDTIME, AbilityData.StartUpTime, args);
         }
 
         private void RecoverPhase(params object[] args)
@@ -124,7 +125,7 @@ namespace Combat
             _onRecover?.Invoke();
             OnRecover(args);
 
-            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(arguments => EndAbility(), TimeUnit.SCALEDTIME, _abilityData.RecoverTime);
+            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(arguments => EndAbility(), TimeUnit.SCALEDTIME, AbilityData.RecoverTime);
         }
 
         public void EndAbility()

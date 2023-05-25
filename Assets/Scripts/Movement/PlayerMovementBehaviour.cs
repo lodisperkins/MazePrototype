@@ -7,6 +7,15 @@ public class PlayerMovementBehaviour : MonoBehaviour
     private Rigidbody _rigidBody;
     [SerializeField] private float _movementSpeed;
     [SerializeField] private int _keysCollected;
+    private Vector3 _velocity;
+
+    public Vector3 Velocity { get => _velocity;  private set => _velocity = value; }
+
+    public float CurrentSpeed
+    {
+        get { return _velocity.magnitude; }
+    }
+
 
     // Start is called before the first frame update
     void Awake()
@@ -28,6 +37,7 @@ public class PlayerMovementBehaviour : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        _rigidBody.MovePosition(transform.position + direction * _movementSpeed * Time.deltaTime);    
+        Velocity = transform.position + direction * _movementSpeed;
+        _rigidBody.MovePosition(Velocity * Time.deltaTime);    
     }
 }
