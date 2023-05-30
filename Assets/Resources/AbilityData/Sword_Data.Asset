@@ -30,7 +30,7 @@ MonoBehaviour:
     MultiHitWaitTime: 0.3
     CollisionLayers:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 63
     Damage: 1
     SpawnEffect: {fileID: 0}
     HitEffect: {fileID: 0}

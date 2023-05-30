@@ -9,6 +9,7 @@ public class PlayerCameraMovementBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = PlayerSpawnerBehaviour.Player.transform.position + Vector3.up * _height;
+        if (PlayerSpawnerBehaviour.Player)
+            transform.position = PlayerSpawnerBehaviour.Player.transform.position + Vector3.up * _height;
     }
 }

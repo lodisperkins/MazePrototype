@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3eb384086e3d6449b5d0d017476084e, type: 3}
+  m_Name: Goblin
+  m_EditorClassIdentifier: 
+  Entity: 3
+  Visual: {fileID: 232749622872859191, guid: 77a0cb126886f6b4e8f6b14c9df43c29, type: 3}

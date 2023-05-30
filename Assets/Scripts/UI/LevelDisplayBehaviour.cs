@@ -480,6 +480,8 @@ public class LevelDisplayBehaviour : MonoBehaviour
         }
         else if (node.Data.StickerType == StickerType.KEY)
             button.image.color = Color.blue;
+        else if (node.Data.StickerType == StickerType.MONSTER)
+            button.image.color = Color.gray;
         else if (button.AddedToPath)
             button.image.color = Color.cyan;
         else

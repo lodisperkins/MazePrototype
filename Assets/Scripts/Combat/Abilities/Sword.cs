@@ -23,7 +23,7 @@ namespace Combat
             _hitCollider.Owner = Owner.gameObject;
             _hitCollider.ColliderInfo = AbilityData.GetCollliderInfo(0);
 
-            Owner.HoldItemInLeft(_swordInstance);
+            Owner.HoldItemInRight(_swordInstance);
 
             _collider = _swordInstance.GetComponentInChildren<Collider>();
             _collider.enabled = false;

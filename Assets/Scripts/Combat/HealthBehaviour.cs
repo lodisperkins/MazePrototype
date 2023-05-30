@@ -7,8 +7,6 @@ namespace Combat
 {
     public class HealthBehaviour : MonoBehaviour
     {
-        [Tooltip("The measurement of the amount of damage this object can take or has taken")]
-        [SerializeField]
         private float _health;
         [Tooltip("The starting amount of damage this object can take or has taken. Set to -1 to start with max health.")]
         [SerializeField]

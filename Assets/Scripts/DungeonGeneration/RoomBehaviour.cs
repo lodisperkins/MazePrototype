@@ -22,6 +22,7 @@ namespace DungeonGeneration
         NONE,
         START,
         KEY,
+        MONSTER,
         EXIT
     }
 
