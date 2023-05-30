@@ -26,7 +26,7 @@ namespace Combat
         private TimedAction _currentTimer;
         private HealthBehaviour _ownerHealth;
 
-        private GameObject _owner;
+        private CombatBehaviour _owner;
         private AbilityData_SO _abilityData;
 
         private UnityEvent _onStart;
@@ -42,7 +42,7 @@ namespace Combat
 
         public bool InUse { get => _inUse; private set => _inUse = value; }
         public HealthBehaviour OwnerHealth { get => _ownerHealth; private set => _ownerHealth = value; }
-        public GameObject Owner { get => _owner; private set => _owner = value; }
+        public CombatBehaviour Owner { get => _owner; private set => _owner = value; }
         public AbilityPhase CurrentPhase { get => _currentPhase; private set => _currentPhase = value; }
         public AbilityData_SO AbilityData { get => _abilityData; private set => _abilityData = value; }
 
@@ -76,7 +76,7 @@ namespace Combat
             _onHitTemp += action;
         }
 
-        public void Init(GameObject owner, AbilityData_SO data)
+        public void Init(CombatBehaviour owner, AbilityData_SO data)
         {
             Owner = owner;
             AbilityData = data;
@@ -137,7 +137,7 @@ namespace Combat
             _inUse = false;
         }
 
-        protected virtual void OnInit(GameObject owner, AbilityData_SO data) { }
+        protected virtual void OnInit(CombatBehaviour owner, AbilityData_SO data) { }
         protected virtual void OnStart(params object[] args) { }
         protected virtual void OnActivate(params object[] args) { }
         protected virtual void OnRecover(params object[] args) { }

@@ -7,13 +7,13 @@ public class PlayerMovementBehaviour : MonoBehaviour
     private Rigidbody _rigidBody;
     [SerializeField] private float _movementSpeed;
     [SerializeField] private int _keysCollected;
-    private Vector3 _velocity;
+    private Vector3 _moveDirection;
 
-    public Vector3 Velocity { get => _velocity;  private set => _velocity = value; }
+    public Vector3 MoveDirection { get => _moveDirection;  set => _moveDirection = value; }
 
     public float CurrentSpeed
     {
-        get { return _velocity.magnitude; }
+        get { return (_moveDirection * _movementSpeed).magnitude; }
     }
 
 
@@ -35,9 +35,12 @@ public class PlayerMovementBehaviour : MonoBehaviour
 
     }
 
-    public void Move(Vector3 direction)
+    private void FixedUpdate()
     {
-        Velocity = transform.position + direction * _movementSpeed;
-        _rigidBody.MovePosition(Velocity * Time.deltaTime);    
+        Vector3 velocity = MoveDirection * _movementSpeed;
+        transform.position += velocity * Time.deltaTime;
+
+        if (MoveDirection.magnitude > 0)
+            transform.rotation = Quaternion.LookRotation(MoveDirection, transform.up);
     }
 }

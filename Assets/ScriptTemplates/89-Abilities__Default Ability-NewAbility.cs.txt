@@ -11,7 +11,7 @@ namespace Combat
     public class #SCRIPTNAME# : Ability
     {
 	    //Called when ability is created
-        public override void OnInit(GameObject newOwner, AbilityData_SO data)
+        protected override void OnInit(CombatBehaviour newOwner, AbilityData_SO data)
         {
 
         }

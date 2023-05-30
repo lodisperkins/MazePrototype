@@ -158,13 +158,14 @@ namespace Combat
             if (!CheckIfCollisionAllowed(otherGameObject.layer))
                 return;
 
-            if (otherCollider || otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer))
+            if (otherCollider && (otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer)))
                 return;
 
             if (ColliderInfo.HitEffect)
                 Instantiate(ColliderInfo.HitEffect, transform.position, Camera.main.transform.rotation);
 
-            Collisions.Add(other.gameObject, Time.time);
+            if (!Collisions.ContainsKey(otherGameObject))
+                Collisions.Add(other.gameObject, Time.time);
 
             HealthBehaviour damageScript = other.GetComponent<HealthBehaviour>();
 

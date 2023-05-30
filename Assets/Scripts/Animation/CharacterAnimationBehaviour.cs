@@ -24,7 +24,7 @@ namespace Animation
         [SerializeField]
         private RuntimeAnimatorController _controller;
         [SerializeField]
-        private PlayerCombatBehaviour _playerCombat;
+        private CombatBehaviour _playerCombat;
         [SerializeField]
         private PlayerMovementBehaviour _playerMovement;
         private AnimatorOverrideController _overrideController;
@@ -183,7 +183,7 @@ namespace Animation
         {
             _animator.Rebind();
             _animator.StopPlayback();
-            _overrideController["Cast"] = _controller.animationClips[0];
+            _overrideController["ActivateAbility"] = _controller.animationClips[0];
         }
 
         public void PlayAbilityAnimation()
@@ -208,7 +208,7 @@ namespace Animation
 
 
                     _currentClip = _defaultCastAnimation;
-                    _overrideController["Cast"] = _defaultCastAnimation;
+                    _overrideController["ActivateAbility"] = _defaultCastAnimation;
                     _animatingMotion = false;
                     _animationPhase = 0;
 
@@ -223,7 +223,7 @@ namespace Animation
 
 
                     _currentClip = _defaultSwingAnimation;
-                    _overrideController["Cast"] = _defaultSwingAnimation;
+                    _overrideController["ActivateAbility"] = _defaultSwingAnimation;
                     _animatingMotion = false;
                     _animationPhase = 0;
 
@@ -238,7 +238,7 @@ namespace Animation
 
 
                     _currentClip = _defaultDefendAnimation;
-                    _overrideController["Cast"] = _defaultDefendAnimation;
+                    _overrideController["ActivateAbility"] = _defaultDefendAnimation;
                     _animatingMotion = false;
                     _animationPhase = 0;
 
@@ -251,7 +251,7 @@ namespace Animation
                         return;
                     }
 
-                    _overrideController["Cast"] = _currentClip;
+                    _overrideController["ActivateAbility"] = _currentClip;
 
                     _animatingMotion = false;
 
