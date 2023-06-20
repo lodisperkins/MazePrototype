@@ -24,9 +24,9 @@ namespace Animation
         [SerializeField]
         private RuntimeAnimatorController _controller;
         [SerializeField]
-        private CombatBehaviour _playerCombat;
+        private CombatBehaviour _combat;
         [SerializeField]
-        private PlayerMovementBehaviour _playerMovement;
+        private MovementBehaviour _movement;
         private AnimatorOverrideController _overrideController;
         private int _animationPhase;
         private bool _animatingMotion;
@@ -46,9 +46,9 @@ namespace Animation
         void Awake()
         {
             _overrideController = new AnimatorOverrideController(_animator.runtimeAnimatorController);
-            _animator.runtimeAnimatorController = _controller;
+            _animator.runtimeAnimatorController = _overrideController;
 
-            _playerCombat.AddOnUseAbilityAction(PlayAbilityAnimation);
+            _combat?.AddOnUseAbilityAction(PlayAbilityAnimation);
         }
 
         private void IncrementAnimationPhase()
@@ -112,7 +112,7 @@ namespace Animation
 
                     stateInfo = _animator.GetNextAnimatorStateInfo(0);
 
-                    if (_currentClipStartUpTime <= 0 && _playerCombat.AbilityInUse)
+                    if (_currentClipStartUpTime <= 0 && _combat.AbilityInUse)
                     {
                         _animator.Play(stateInfo.shortNameHash, 0, _currentClip.events[0].time);
                         break;
@@ -131,7 +131,7 @@ namespace Animation
                     if (!_currentClip)
                         _currentClip = _animator.GetNextAnimatorClipInfo(0)[0].clip;
 
-                    if ((_currentClipActiveTime <= 0 || !_playerCombat.AbilityInUse && (int)_playerCombat.GetActiveAbility().CurrentPhase > 1)
+                    if ((_currentClipActiveTime <= 0 || !_combat.AbilityInUse && (int)_combat.GetActiveAbility().CurrentPhase > 1)
                         && _currentClip.events.Length >= 2)
                     {
                         _animator.playbackTime = _currentClip.events[0].time;
@@ -188,7 +188,7 @@ namespace Animation
 
         public void PlayAbilityAnimation()
         {
-            Ability ability = _playerCombat.GetActiveAbility();
+            Ability ability = _combat.GetActiveAbility();
 
             _currentAbilityAnimating = ability;
             _animator.SetFloat("AnimationSpeedScale", 1);
@@ -276,7 +276,7 @@ namespace Animation
         // Update is called once per frame
         void Update()
         {
-            _animator.SetFloat("MovementSpeed", _playerMovement.CurrentSpeed);
+            _animator.SetFloat("MovementSpeed", _movement.CurrentSpeed);
         }
     }
 }

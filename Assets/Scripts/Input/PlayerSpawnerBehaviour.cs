@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerSpawnerBehaviour : MonoBehaviour
 {
-    [SerializeField] private PlayerMovementBehaviour _playerReference;
-    private static PlayerMovementBehaviour _player;
+    [SerializeField] private MovementBehaviour _playerReference;
+    private static MovementBehaviour _player;
 
-    public static PlayerMovementBehaviour Player { get => _player; }
+    public static MovementBehaviour Player { get => _player; }
     
     public void SpawnPlayer(LevelBehaviour level)
     {

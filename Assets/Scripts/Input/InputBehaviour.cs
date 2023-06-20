@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class InputBehaviour : MonoBehaviour
 {
-    private PlayerMovementBehaviour _movement;
+    private MovementBehaviour _movement;
     private CombatBehaviour _combat;
 
     // Start is called before the first frame update
     void Awake()
     {
-        _movement = GetComponent<PlayerMovementBehaviour>();
+        _movement = GetComponent<MovementBehaviour>();
         _combat = GetComponent<CombatBehaviour>();
     }
 

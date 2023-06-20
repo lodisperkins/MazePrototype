@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 594497375}
   - component: {fileID: 594497374}
+  - component: {fileID: 594497376}
   m_Layer: 0
   m_Name: Level
   m_TagString: Untagged
@@ -169,6 +170,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &594497376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 594497373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b93b01cd42d6347a768180feb4f32f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _includedLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  _agentTypeID: 0
+  _agentRadius: 0.5
+  _agentHeight: 1
+  _agentSlope: 1
+  _agentClimb: 1
 --- !u!1 &631904815
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,7 +776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0522255b9135846acecf6d8450eb03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerReference: {fileID: 4472837738899231307, guid: 78ab5917028057240a3d89df518715de, type: 3}
+  _playerReference: {fileID: 4020564697803156514, guid: 663743a2d0757bc4a80e13bdbdad9640, type: 3}
 --- !u!4 &1581752234
 Transform:
   m_ObjectHideFlags: 0
@@ -865,7 +886,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 631904815}
+      - m_Target: {fileID: 1457036083}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
