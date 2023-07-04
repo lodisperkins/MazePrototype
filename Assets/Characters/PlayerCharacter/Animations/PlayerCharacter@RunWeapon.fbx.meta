@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 1c8ea442a74d41e468430edd9441788b
+guid: c2328b34486ec8e4eaefcbba72ec916d
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
-    second: WalkWeapon
+    second: RunWeapon
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -24,8 +24,7 @@ ModelImporter:
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
       might lower retargeting quality:\nNote: Activate translation DOF on avatar
       to improve retargeting quality.\n\t'PlayerCharacter_l_Leg_BallSHJnt' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'PlayerCharacter_r_Leg_BallSHJnt'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n"
+      humanoid transforms and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -39,11 +38,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: WalkWeapon
+      name: RunWeapon
       takeName: Take 001
       internalID: 0
       firstFrame: 1
-      lastFrame: 29
+      lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
