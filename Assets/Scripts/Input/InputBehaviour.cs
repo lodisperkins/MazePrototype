@@ -20,7 +20,8 @@ public class InputBehaviour : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
-        _movement.Move(moveDirection);
+        if (!_combat.AbilityInUse)
+            _movement.Move(moveDirection);
 
         if (Input.GetButtonDown("Fire1"))
             _combat.UseAbility1();

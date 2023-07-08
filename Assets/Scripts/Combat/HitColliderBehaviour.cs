@@ -44,7 +44,6 @@ namespace Combat
         protected override void Awake()
         {
             base.Awake();
-            gameObject.layer = LayerMask.NameToLayer("Ability");
         }
 
         private void Start()
@@ -87,61 +86,12 @@ namespace Combat
             StartTime = Time.time;
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void ResolveCollision(Collider other)
         {
-            if (Collisions.ContainsKey(other.gameObject) || ColliderInfo.IsMultiHit
-                || other.gameObject == Owner || !CheckIfCollisionAllowed(other.gameObject.layer)
-                || (Collisions.Count > 0 && ColliderInfo.DestroyOnHit))
+            if (!CheckIfCollisionAllowed(other.gameObject.layer) || (Collisions.Count > 0 && ColliderInfo.DestroyOnHit))
             {
                 return;
             }
-
-            GameObject otherGameObject = null;
-            //If there is a rigidy body in the object's hierarchy...
-            if (!other.attachedRigidbody)
-                //...store its game object.
-                otherGameObject = other.attachedRigidbody.gameObject;
-            //If there isn't a rigid body attached in the hierarchy...
-            else
-                //...store the game object of the collider.
-                otherGameObject = other.gameObject;
-
-            ColliderBehaviour otherCollider = other.GetComponent<ColliderBehaviour>();
-
-            if (!CheckIfCollisionAllowed(otherGameObject.layer))
-                return;
-
-            if (otherCollider || otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer))
-                return;
-
-            if (ColliderInfo.HitEffect)
-                Instantiate(ColliderInfo.HitEffect, transform.position, Camera.main.transform.rotation);
-
-            Collisions.Add(other.gameObject, Time.time);
-
-            HealthBehaviour damageScript = other.GetComponent<HealthBehaviour>();
-
-            if (damageScript)
-                damageScript.TakeDamage(ColliderInfo);
-
-            ColliderInfo.OnHit?.Invoke(other.gameObject, otherCollider, other, this, damageScript);
-
-            if (ColliderInfo.DestroyOnHit)
-                Destroy(gameObject);
-        }
-
-
-        private void OnTriggerStay(Collider other)
-        {
-            if (!ColliderInfo.IsMultiHit || !CheckHitTime(other.gameObject)
-                || other.gameObject == Owner || !CheckIfCollisionAllowed(other.gameObject.layer)
-                || (Collisions.Count > 0 && ColliderInfo.DestroyOnHit))
-            {
-                return;
-            }
-
-            if (!Collisions.ContainsKey(other.gameObject))
-                Collisions.Add(other.gameObject, Time.time);
 
             GameObject otherGameObject = null;
             //If there is a rigidy body in the object's hierarchy...
@@ -155,7 +105,7 @@ namespace Combat
 
             ColliderBehaviour otherCollider = other.GetComponent<ColliderBehaviour>();
 
-            if (!CheckIfCollisionAllowed(otherGameObject.layer))
+            if (!CheckIfCollisionAllowed(otherGameObject.layer) || otherGameObject == Owner)
                 return;
 
             if (otherCollider && (otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer)))
@@ -164,110 +114,61 @@ namespace Combat
             if (ColliderInfo.HitEffect)
                 Instantiate(ColliderInfo.HitEffect, transform.position, Camera.main.transform.rotation);
 
-            if (!Collisions.ContainsKey(otherGameObject))
-                Collisions.Add(otherGameObject, Time.time);
+            if (!Collisions.ContainsKey(otherGameObject.gameObject))
+                Collisions.Add(otherGameObject.gameObject, Time.time);
 
             HealthBehaviour damageScript = otherGameObject.GetComponent<HealthBehaviour>();
 
             if (damageScript)
                 damageScript.TakeDamage(ColliderInfo);
 
-            ColliderInfo.OnHit?.Invoke(other.gameObject, otherCollider, other, this, damageScript);
+            ColliderInfo.OnHit?.Invoke(otherGameObject, otherCollider, other, this, damageScript);
 
             if (ColliderInfo.DestroyOnHit)
                 Destroy(gameObject);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (Collisions.ContainsKey(other.gameObject))
+                return;
+
+            ResolveCollision(other);
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (!ColliderInfo.IsMultiHit || !CheckHitTime(other.gameObject))
+                return;
+
+            ResolveCollision(other);
+
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            Collisions.Remove(other.gameObject);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            GameObject other = collision.gameObject;
-
-            if (Collisions.ContainsKey(other.gameObject) || ColliderInfo.IsMultiHit
-                || other.gameObject == Owner || !CheckIfCollisionAllowed(other.gameObject.layer)
-                || (Collisions.Count > 0 && ColliderInfo.DestroyOnHit))
-            {
-                return;
-            }
-
-            GameObject otherGameObject = null;
-            //If there is a rigidy body in the object's hierarchy...
-            if (collision.collider.attachedRigidbody)
-                //...store its game object.
-                otherGameObject = collision.collider.attachedRigidbody.gameObject;
-            //If there isn't a rigid body attached in the hierarchy...
-            else
-                //...store the game object of the collider.
-                otherGameObject = other.gameObject;
-
-            ColliderBehaviour otherCollider = other.GetComponent<ColliderBehaviour>();
-
-            if (!CheckIfCollisionAllowed(otherGameObject.layer))
+            if (Collisions.ContainsKey(collision.gameObject))
                 return;
 
-            if (otherCollider && (otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer)))
-                return;
-
-            if (ColliderInfo.HitEffect)
-                Instantiate(ColliderInfo.HitEffect, transform.position, Camera.main.transform.rotation);
-
-            Collisions.Add(other.gameObject, Time.time);
-
-            HealthBehaviour damageScript = other.GetComponent<HealthBehaviour>();
-
-            if (damageScript)
-                damageScript.TakeDamage(ColliderInfo);
-
-            ColliderInfo.OnHit?.Invoke(other.gameObject, otherCollider, other, this, damageScript);
-
-            if (ColliderInfo.DestroyOnHit)
-                Destroy(gameObject);
+            ResolveCollision(collision.collider);
         }
 
         private void OnCollisionStay(Collision collision)
         {
-            if (!ColliderInfo.IsMultiHit || !CheckHitTime(collision.gameObject)
-                || collision.gameObject == Owner || !CheckIfCollisionAllowed(collision.gameObject.layer)
-                || (Collisions.Count > 0 && ColliderInfo.DestroyOnHit))
-            {
-                return;
-            }
-
-            if (!Collisions.ContainsKey(collision.gameObject))
-                Collisions.Add(collision.gameObject, Time.time);
-
-            GameObject otherGameObject = null;
-            //If there is a rigidy body in the object's hierarchy...
-            if (collision.collider.attachedRigidbody)
-                //...store its game object.
-                otherGameObject = collision.collider.attachedRigidbody.gameObject;
-            //If there isn't a rigid body attached in the hierarchy...
-            else
-                //...store the game object of the collider.
-                otherGameObject = collision.gameObject;
-
-            ColliderBehaviour otherCollider = collision.gameObject.GetComponent<ColliderBehaviour>();
-
-            if (!CheckIfCollisionAllowed(otherGameObject.layer))
+            if (!ColliderInfo.IsMultiHit || !CheckHitTime(collision.gameObject))
                 return;
 
-            if (otherCollider && (otherCollider.Owner == Owner || !otherCollider.CheckIfCollisionAllowed(gameObject.layer)))
-                return;
+            ResolveCollision(collision.collider);
+        }
 
-            if (ColliderInfo.HitEffect)
-                Instantiate(ColliderInfo.HitEffect, transform.position, Camera.main.transform.rotation);
-
-            if (!Collisions.ContainsKey(otherGameObject))
-                Collisions.Add(otherGameObject, Time.time);
-
-            HealthBehaviour damageScript = otherGameObject.GetComponent<HealthBehaviour>();
-
-            if (damageScript)
-                damageScript.TakeDamage(ColliderInfo);
-
-            ColliderInfo.OnHit?.Invoke(collision.gameObject, otherCollider, collision.collider, this, damageScript);
-
-            if (ColliderInfo.DestroyOnHit)
-                Destroy(gameObject);
+        private void OnCollisionExit(Collision other)
+        {
+            Collisions.Remove(other.gameObject);
         }
 
         private void Update()

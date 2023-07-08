@@ -17,6 +17,9 @@ public class EnemyMovementBehaviour : MovementBehaviour
 
     public override void Move()
     {
+        if (PlayerSpawnerBehaviour.Player == null || !PlayerSpawnerBehaviour.Player.gameObject.activeInHierarchy)
+            return;
+
         Vector3 playerPosition = PlayerSpawnerBehaviour.Player.Position;
 
         float distance = Vector3.Distance(playerPosition, Position);

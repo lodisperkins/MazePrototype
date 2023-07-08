@@ -5075,7 +5075,7 @@ MonoBehaviour:
   _owner: {fileID: 7793134249152058112}
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   _colliderInfo:
     Name: GoblinCollider
     DespawnAfterTimeLimit: 0
