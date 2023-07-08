@@ -276,7 +276,7 @@ namespace Animation
         // Update is called once per frame
         void Update()
         {
-            _animator.SetFloat("MovementSpeed", _movement.CurrentSpeed);
+            _animator.SetFloat("MovementSpeed", _movement.GetVelocity().magnitude);
         }
     }
 }

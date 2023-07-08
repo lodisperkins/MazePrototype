@@ -4470,60 +4470,6 @@ Transform:
   m_Father: {fileID: 8451088214998727810}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3353429618137708376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7793134249152058112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 018f8cd975ae166419fce64f36cdd2be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _owner: {fileID: 7793134249152058112}
-  _collisionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _colliderInfo:
-    Name: GoblinCollider
-    DespawnAfterTimeLimit: 0
-    TimeActive: 0
-    DestroyOnHit: 0
-    IsMultiHit: 1
-    MultiHitWaitTime: 0.3
-    CollisionLayers:
-      serializedVersion: 2
-      m_Bits: 64
-    Damage: 1
-    SpawnEffect: {fileID: 0}
-    HitEffect: {fileID: 0}
-    SpawnSound: {fileID: 0}
-    HitSound: {fileID: 0}
-    DespawnSound: {fileID: 0}
---- !u!195 &1191354373239671947
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7793134249152058112}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!1 &6814707086485389407
 GameObject:
   m_ObjectHideFlags: 0
@@ -5092,6 +5038,75 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.26325518, y: -0.34039807, z: 0.14864531}
     m_Extent: {x: 0.032340348, y: 0.048563123, z: 0.03161231}
   m_DirtyAABB: 0
+--- !u!195 &1191354373239671947
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7793134249152058112}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.15
+  m_Speed: 3.5
+  m_Acceleration: 16
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0.7
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &3353429618137708376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7793134249152058112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 018f8cd975ae166419fce64f36cdd2be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _owner: {fileID: 7793134249152058112}
+  _collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _colliderInfo:
+    Name: GoblinCollider
+    DespawnAfterTimeLimit: 0
+    TimeActive: 0
+    DestroyOnHit: 0
+    IsMultiHit: 1
+    MultiHitWaitTime: 0.3
+    CollisionLayers:
+      serializedVersion: 2
+      m_Bits: 64
+    Damage: 1
+    SpawnEffect: {fileID: 0}
+    HitEffect: {fileID: 0}
+    SpawnSound: {fileID: 0}
+    HitSound: {fileID: 0}
+    DespawnSound: {fileID: 0}
+--- !u!114 &3449437486599429583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7793134249152058112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 277b7d90f270e5247a7316133a69b3ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movementSpeed: 2
+  _faceMoveDirection: 1
+  _detectionRadius: 5
 --- !u!1 &7836478666695720970
 GameObject:
   m_ObjectHideFlags: 0
@@ -6096,7 +6111,7 @@ PrefabInstance:
     - target: {fileID: 1513884664545591032, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: af2259e85f0124c4680c71e231f5c178, type: 2}
+      objectReference: {fileID: 9100000, guid: df0d2c43c2d966e438631f9510abd4d0, type: 2}
     - target: {fileID: 3578028674122750301, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
       propertyPath: m_Name
       value: Goblin
@@ -6150,10 +6165,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7638713128924547083, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
+      propertyPath: _movement
+      value: 
+      objectReference: {fileID: 3449437486599429583}
+    - target: {fileID: 7638713128924547083, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
       propertyPath: _controller
       value: 
       objectReference: {fileID: 9100000, guid: af2259e85f0124c4680c71e231f5c178, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4472837738899231307, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 54fd02e27a78da1458f31f7411a4ffab, type: 3}
 --- !u!4 &7858340967827581459 stripped
 Transform:

@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class PlayerCameraMovementBehaviour : MonoBehaviour
 {
-    [SerializeField] private float _height;
+    [SerializeField]
+    private Vector3 _offset = Vector3.up;
 
     // Update is called once per frame
     void Update()
     {
-        if (PlayerSpawnerBehaviour.Player)
-            transform.position = PlayerSpawnerBehaviour.Player.transform.position + Vector3.up * _height;
+        if (!PlayerSpawnerBehaviour.Player)
+            return;
+
+        transform.position = PlayerSpawnerBehaviour.Player.transform.position + _offset;
+
+        transform.LookAt(PlayerSpawnerBehaviour.Player.transform);
     }
 }
