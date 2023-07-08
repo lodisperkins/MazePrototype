@@ -26,11 +26,11 @@ MonoBehaviour:
     DespawnAfterTimeLimit: 0
     TimeActive: 0
     DestroyOnHit: 0
-    IsMultiHit: 1
-    MultiHitWaitTime: 0.3
+    IsMultiHit: 0
+    MultiHitWaitTime: 0
     CollisionLayers:
       serializedVersion: 2
-      m_Bits: 63
+      m_Bits: 191
     Damage: 1
     SpawnEffect: {fileID: 0}
     HitEffect: {fileID: 0}

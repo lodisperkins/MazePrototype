@@ -26,7 +26,7 @@ namespace Combat
         {
             get
             {
-                return _ability1.InUse || _ability2.InUse;
+                return _ability1?.InUse == true || _ability2?.InUse == true;
             }
         }
 
