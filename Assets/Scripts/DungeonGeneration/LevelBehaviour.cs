@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using Random = UnityEngine.Random;
 using UnityEngine.AI;
+using UnityEditor.AI;
 
 public class LevelBehaviour : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class LevelBehaviour : MonoBehaviour
     [SerializeField] private List<Node<RoomDescription>> _playerPath;
     private List<Node<RoomDescription>> _defaultPath;
 
-    private NavMeshGenerationBehaviour _navMeshGenerator;
+    private NavMeshSurface _navMeshGenerator;
 
     private static int _currentKeyRequirement;
     public int Width { get => Template.Width; }
@@ -63,7 +64,7 @@ public class LevelBehaviour : MonoBehaviour
         _roomGraph.GetNode(_exitPosition).Data.StickerType = StickerType.EXIT;
         PlaceKeys();
 
-        _navMeshGenerator = GetComponent<NavMeshGenerationBehaviour>();
+        _navMeshGenerator = GetComponent<NavMeshSurface>();
     }
 
     /// <summary>
@@ -422,7 +423,7 @@ public class LevelBehaviour : MonoBehaviour
             room.BuildRoom(roomSpawnPosition);
         }
 
-        _navMeshGenerator.GenerateNavMesh();
+        _navMeshGenerator.BuildNavMesh();
     }
 }
 
